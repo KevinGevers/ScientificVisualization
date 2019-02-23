@@ -1,6 +1,5 @@
 #include <rfftw.h>              //the numerical simulation FFTW library
 #include <math.h>               //for various math functions
-#include <stdio.h>              //for printing the help text
 #include "simulation.h"
 
 Simulation::Simulation()
@@ -162,4 +161,3 @@ void Simulation::do_one_simulation_step(void)
       //glutPostRedisplay();
     //}
 }
-
