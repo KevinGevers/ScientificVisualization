@@ -1,29 +1,42 @@
 #include <stdio.h>              //for printing the help text
+#include <stdlib.h>
 #include <math.h>               //for various math functions
-#include <rfftw.h>              //the numerical simulation FFTW library
 #include <math.h>
 #include "visualization.h"
 #include <QDebug>
 
+#include <QTimer>
+
+using namespace std;
+
 Visualization::Visualization(QWidget *parent) : QOpenGLWidget(parent)
 {
     qDebug() << "Constructor of GLWidget";
+    simulation = new Simulation(50);
+    QTimer *timer = new QTimer;
+    timer->start();
+    QObject::connect(timer,SIGNAL(timeout()),this,SLOT(do_one_simulation_step()));
+    simulation->drag(10,10, width(), height());
 }
 
-void Visualization::initializeGL()
+
+void Visualization::do_one_simulation_step()
 {
-    glClearColor(1.0,0.0,1.0,1.0);
+    if(!frozen){
+        simulation->do_one_simulation_step();
+        update();
+    }
 }
 
 //rainbow: Implements a color palette, mapping the scalar 'value' to a rainbow color RGB
 void Visualization::rainbow(float value,float* R,float* G,float* B)
 {
-   const float dx=0.8;
+   const float dx=0.8f;
    if (value<0) value=0; if (value>1) value=1;
    value = (6-2*dx)*value+dx;
-   *R = max(0.0,(3-fabs(value-4)-fabs(value-5))/2);
-   *G = max(0.0,(4-fabs(value-2)-fabs(value-4))/2);
-   *B = max(0.0,(3-fabs(value-1)-fabs(value-2))/2);
+   *R = max(0.0f,(3-fabs(value-4)-fabs(value-5))/2);
+   *G = max(0.0f,(4-fabs(value-2)-fabs(value-4))/2);
+   *B = max(0.0f,(3-fabs(value-1)-fabs(value-2))/2);
 }
 
 //set_colormap: Sets three different types of colormaps
@@ -38,9 +51,11 @@ void Visualization::set_colormap(float vy)
    else if (scalar_col==COLOR_BANDS)
        {
           const int NLEVELS = 7;
-          vy *= NLEVELS; vy = (int)(vy); vy/= NLEVELS;
+          vy *= NLEVELS; vy = static_cast<int>(vy); vy/= NLEVELS;
           rainbow(vy,&R,&G,&B);
        }
+   else
+       rainbow(vy,&R,&G,&B);
 
    glColor3f(R,G,B);
 }
@@ -54,13 +69,13 @@ void Visualization::direction_to_color(float x, float y, int method)
     float r,g,b,f;
     if (method)
     {
-      f = atan2(y,x) / 3.1415927 + 1;
+      f = atan2(y,x) / 3.1415927f + 1;
       r = f;
       if(r > 1) r = 2 - r;
-      g = f + .66667;
+      g = f + .66667f;
       if(g > 2) g -= 2;
       if(g > 1) g = 2 - g;
-      b = f + 2 * .66667;
+      b = f + 2 * .66667f;
       if(b > 2) b -= 2;
       if(b > 1) b = 2 - b;
     }
@@ -72,42 +87,44 @@ void Visualization::direction_to_color(float x, float y, int method)
 //visualize: This is the main visualization function
 void Visualization::visualize(void)
 {
+    qDebug() << "visualize";
     int        i, j, idx; double px,py;
-    fftw_real  wn = (fftw_real)winWidth / (fftw_real)(DIM + 1);   // Grid cell width
-    fftw_real  hn = (fftw_real)winHeight / (fftw_real)(DIM + 1);  // Grid cell heigh
+    double  wn = static_cast<double>(width()) / static_cast<double>(simulation->get_dim() + 1);   // Grid cell width
+    double  hn = static_cast<double>(height()) / static_cast<double>(simulation->get_dim() + 1);  // Grid cell heigh
 
     if (draw_smoke)
     {
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    for (j = 0; j < DIM - 1; j++)			//draw smoke
+    for (j = 0; j < simulation->get_dim() - 1; j++)			//draw smoke
     {
-        glBegin(GL_TRIANGLE_STRIP);
+//        glBegin(GL_TRIANGLE_STRIP);
+        glBegin(GL_TRIANGLES);
 
         i = 0;
-        px = wn + (fftw_real)i * wn;
-        py = hn + (fftw_real)j * hn;
-        idx = (j * DIM) + i;
-        glColor3f(rho[idx],rho[idx],rho[idx]);
+        px = wn + static_cast<double>(i) * wn;
+        py = hn + static_cast<double>(j) * hn;
+        idx = (j * simulation->get_dim()) + i;
+        glColor3f(simulation->get_rho(idx), simulation->get_rho(idx), simulation->get_rho(idx));
         glVertex2f(px,py);
 
-        for (i = 0; i < DIM - 1; i++)
+        for (i = 0; i < simulation->get_dim() - 1; i++)
         {
-            px = wn + (fftw_real)i * wn;
-            py = hn + (fftw_real)(j + 1) * hn;
-            idx = ((j + 1) * DIM) + i;
-            set_colormap(rho[idx]);
+            px = wn + static_cast<double>(i) * wn;
+            py = hn + static_cast<double>(j + 1) * hn;
+            idx = ((j + 1) * simulation->get_dim()) + i;
+            set_colormap(simulation->get_rho(idx));
             glVertex2f(px, py);
-            px = wn + (fftw_real)(i + 1) * wn;
-            py = hn + (fftw_real)j * hn;
-            idx = (j * DIM) + (i + 1);
-            set_colormap(rho[idx]);
+            px = wn + static_cast<double>(i + 1) * wn;
+            py = hn + static_cast<double>(j) * hn;
+            idx = (j * simulation->get_dim()) + (i + 1);
+            set_colormap(simulation->get_rho(idx));
             glVertex2f(px, py);
         }
 
-        px = wn + (fftw_real)(DIM - 1) * wn;
-        py = hn + (fftw_real)(j + 1) * hn;
-        idx = ((j + 1) * DIM) + (DIM - 1);
-        set_colormap(rho[idx]);
+        px = wn + static_cast<double>(simulation->get_dim() - 1) * wn;
+        py = hn + static_cast<double>(j + 1) * hn;
+        idx = ((j + 1) * simulation->get_dim()) + (simulation->get_dim() - 1);
+        set_colormap(simulation->get_rho(idx));
         glVertex2f(px, py);
         glEnd();
     }
@@ -116,22 +133,66 @@ void Visualization::visualize(void)
     if (draw_vecs)
     {
       glBegin(GL_LINES);				//draw velocities
-      for (i = 0; i < DIM; i++)
-        for (j = 0; j < DIM; j++)
+      for (i = 0; i < simulation->get_dim(); i++)
+        for (j = 0; j < simulation->get_dim(); j++)
         {
-          idx = (j * DIM) + i;
-          direction_to_color(vx[idx],vy[idx],color_dir);
-          glVertex2f(wn + (fftw_real)i * wn, hn + (fftw_real)j * hn);
-          glVertex2f((wn + (fftw_real)i * wn) + vec_scale * vx[idx], (hn + (fftw_real)j * hn) + vec_scale * vy[idx]);
+          idx = (j * simulation->get_dim()) + i;
+          direction_to_color(simulation->get_vx(idx), simulation->get_vy(idx), color_dir);
+          glVertex2f(wn + static_cast<double>(i) * wn, hn + static_cast<double>(j) * hn);
+          glVertex2f((wn + static_cast<double>(i) * wn) + vec_scale * simulation->get_vx(idx), (hn + static_cast<double>(j) * hn) + vec_scale * simulation->get_vy(idx));
         }
       glEnd();
     }
 }
 
 
+void Visualization::initializeGL()
+{
+    glClearColor(0.0,0.0,0.0,0.0);
+}
+
+
+void Visualization::paintGL()
+{
+//    glViewport(0.0f, 0.0f, width(), height());
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, (GLdouble)width(), 0.0, (GLdouble)height(), -1, 1);
+
+
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+    visualize();
+    glFlush();
+}
+
+
+//void Visualization::paintGL()
+//{
+//        glMatrixMode(GL_PROJECTION);
+//        glLoadIdentity();
+//        glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//    glMatrixMode(GL_MODELVIEW);
+//    glLoadIdentity();
+
+//    glShadeModel(GL_SMOOTH);
+//    glEnable(GL_LIGHTING);
+//    glEnable(GL_LIGHT0);
+//    float light[4] = {1,1,1,0};
+//    glLightfv(GL_LIGHT0, GL_POSITION, light);
+//    glEnable(GL_COLOR_MATERIAL);
+//    visualize();
+//    glMatrixMode(GL_PROJECTION);
+//    glLoadIdentity();
+//    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+//    glFlush();
+//}
+
 //------ INTERACTION CODE STARTS HERE -----------------------------------------------------------------
 
-//display: Handle window redrawing events. Simply delegates to visualize().
+/*display: Handle window redrawing events. Simply delegates to visualize().
 void Visualization::display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -139,7 +200,7 @@ void Visualization::display(void)
     glLoadIdentity();
     visualize();
     glFlush();
-    glutSwapBuffers();
+//    glutSwapBuffers();
 }
 
 //reshape: Handle window resizing (reshaping) events
@@ -148,7 +209,8 @@ void Visualization::reshape(int w, int h)
     glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
+//    gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
+    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
     winWidth = w; winHeight = h;
 }
 
@@ -175,30 +237,14 @@ void Visualization::keyboard(unsigned char key, int x, int y)
 }
 
 
-
+*/
 // drag: When the user drags with the mouse, add a force that corresponds to the direction of the mouse
 //       cursor movement. Also inject some new matter into the field at the mouse location.
-void Visualization::drag(int mx, int my)
+
+
+void Visualization::mouseMoveEvent(QMouseEvent *event)
 {
-    int xi,yi,X,Y; double  dx, dy, len;
-    static int lmx=0,lmy=0;				//remembers last mouse location
-
-    // Compute the array index that corresponds to the cursor location
-    xi = (int)clamp((double)(DIM + 1) * ((double)mx / (double)winWidth));
-    yi = (int)clamp((double)(DIM + 1) * ((double)(winHeight - my) / (double)winHeight));
-
-    X = xi; Y = yi;
-
-    if (X > (DIM - 1))  X = DIM - 1; if (Y > (DIM - 1))  Y = DIM - 1;
-    if (X < 0) X = 0; if (Y < 0) Y = 0;
-
-    // Add force at the cursor location
-    my = winHeight - my;
-    dx = mx - lmx; dy = my - lmy;
-    len = sqrt(dx * dx + dy * dy);
-    if (len != 0.0) {  dx *= 0.1 / len; dy *= 0.1 / len; }
-    fx[Y * DIM + X] += dx;
-    fy[Y * DIM + X] += dy;
-    rho[Y * DIM + X] = 10.0f;
-    lmx = mx; lmy = my;
+    float mx = event->localPos().x();
+    float my = event->localPos().y();
+    simulation->drag(mx,my, width(), height());
 }

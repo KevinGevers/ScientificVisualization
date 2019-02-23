@@ -3,6 +3,11 @@
 
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
+#include <QMouseEvent>
+
+#include <fftw3.h>
+
+#include "simulation.h"
 
 
 class Visualization : public QOpenGLWidget
@@ -10,7 +15,6 @@ class Visualization : public QOpenGLWidget
     Q_OBJECT
 public:
     explicit Visualization(QWidget *parent = nullptr);
-    void initializeGL();
     void rainbow(float value,float* R,float* G,float* B);
     void set_colormap(float vy);
     void direction_to_color(float x, float y, int method);
@@ -18,7 +22,6 @@ public:
     void display(void);
     void reshape(int w, int h);
     void keyboard(unsigned char key, int x, int y);
-    void drag(int mx, int my);
 
 
 
@@ -34,9 +37,17 @@ public:
     int   scalar_col = 0;           //method for scalar coloring
     int   frozen = 0;               //toggles on/off the animation
 
-
+public slots:
+    void do_one_simulation_step();
 
 protected:
+    void initializeGL();
+    void paintGL();
+
+    void mouseMoveEvent(QMouseEvent *event);
+
+private:
+    Simulation* simulation;
 
 };
 

@@ -43,8 +43,12 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-LIBS += -lrfftw -lfftw
-
 win32 {
     LIBS += -lopengl32 -lglu32
+
+    LIBS += -L$$PWD/../FFTW/ -lfftw3-3
+
+    INCLUDEPATH += $$PWD/../FFTW
+    DEPENDPATH += $$PWD/../FFTW
 }
+
