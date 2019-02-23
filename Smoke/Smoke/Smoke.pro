@@ -44,3 +44,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 LIBS += -lrfftw -lfftw
+
+win32 {
+    LIBS += -lopengl32 -lglu32
+}
