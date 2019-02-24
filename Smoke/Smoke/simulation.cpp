@@ -159,16 +159,11 @@ void Simulation::set_forces(void)
 //      - set_forces:
 //      - solve:            read forces from the user
 //      - diffuse_matter:   compute a new set of velocities
-//      - gluPostRedisplay: draw a new visualization frame
 void Simulation::do_one_simulation_step(void)
 {
-    //if (!frozen)
-    //{
-      set_forces();
-      solve(dim, vx, vy, vx0, vy0, visc, dt);
-      diffuse_matter(dim, vx, vy, rho, rho0, dt);
-      //glutPostRedisplay();
-    //}
+    set_forces();
+    solve(dim, vx, vy, vx0, vy0, static_cast<double>(visc), dt);
+    diffuse_matter(dim, vx, vy, rho, rho0, dt);
 }
 
 void Simulation::drag(int mx, int my, int winWidth, int winHeight)
@@ -192,7 +187,7 @@ void Simulation::drag(int mx, int my, int winWidth, int winHeight)
     if (len != 0.0) {  dx *= 0.1 / len; dy *= 0.1 / len; }
     fx[Y * dim + X] += dx;
     fy[Y * dim + X] += dy;
-    rho[Y * dim + X] = 10.0f;
+    rho[Y * dim + X] = 10.0;
     lmx = mx; lmy = my;
 }
 
@@ -207,9 +202,9 @@ double Simulation::get_rho(int idx)
     return rho[idx];
 }
 
-double Simulation::get_rho0(int idx)
+float Simulation::get_rhof(int idx)
 {
-    return rho0[idx];
+    return static_cast<float>(rho[idx]);
 }
 
 double Simulation::get_vx(int idx)
@@ -222,14 +217,14 @@ double Simulation::get_vy(int idx)
     return vy[idx];
 }
 
-double Simulation::get_vx0(int idx)
+float Simulation::get_vxf(int idx)
 {
-    return vx0[idx];
+    return static_cast<float>(vx[idx]);
 }
 
-double Simulation::get_vy0(int idx)
+float Simulation::get_vyf(int idx)
 {
-    return vy0[idx];
+    return static_cast<float>(vy[idx]);
 }
 
 void Simulation::set_viscosity(float viscosity)

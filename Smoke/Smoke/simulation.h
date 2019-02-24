@@ -18,13 +18,14 @@ public:
     void drag(int mx, int my, int winWidth, int winHeight);
 
     int get_dim();
+
     double get_rho(int idx);
-    double get_rho0(int idx);
+    float get_rhof(int idx);
 
     double get_vx(int idx);
     double get_vy(int idx);
-    double get_vx0(int idx);
-    double get_vy0(int idx);
+    float get_vxf(int idx);
+    float get_vyf(int idx);
 
     void set_viscosity(float viscosity);
     void set_dt(double new_dt);

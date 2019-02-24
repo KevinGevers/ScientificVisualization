@@ -54,6 +54,8 @@ protected:
 
     void mouseMoveEvent(QMouseEvent *event);
 
+    void paintSmoke(float wn, float hn);
+    void paintVectors(float wn, float hn);
 private:
     Simulation* simulation;
 

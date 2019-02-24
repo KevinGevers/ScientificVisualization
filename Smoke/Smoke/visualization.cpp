@@ -86,63 +86,77 @@ void Visualization::direction_to_color(float x, float y, int method)
     glColor3f(r,g,b);
 }
 
+void Visualization::paintVectors(float wn, float hn)
+{
+    int idx;
+
+    glBegin(GL_LINES);				//draw velocities
+    for (int i = 0; i < simulation->get_dim(); i++)
+      for (int j = 0; j < simulation->get_dim(); j++)
+      {
+        idx = (j * simulation->get_dim()) + i;
+        direction_to_color(simulation->get_vxf(idx), simulation->get_vyf(idx), color_dir);
+        glVertex2f(wn + i * wn, hn + j * hn);
+        glVertex2f((wn + i * wn) + vec_scale * simulation->get_vxf(idx), (hn + j * hn) + vec_scale * simulation->get_vyf(idx));
+      }
+    glEnd();
+}
+
+void Visualization::paintSmoke(float wn, float hn)
+{
+    int idx0, idx1, idx2, idx3;
+    float px0, py0, px1, py1, px2, py2, px3, py3;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (int j = 0; j < simulation->get_dim() - 1; j++)            //draw smoke
+    {
+        for (int i = 0; i < simulation->get_dim() - 1; i++)
+        {
+            px0 = wn + i * wn;
+            py0 = hn + j * hn;
+            idx0 = (j * simulation->get_dim()) + i;
+
+
+            px1 = wn + i * wn;
+            py1 = hn + (j + 1) * hn;
+            idx1 = ((j + 1) * simulation->get_dim()) + i;
+
+
+            px2 = wn + (i + 1) * wn;
+            py2 = hn + (j + 1) * hn;
+            idx2 = ((j + 1) * simulation->get_dim()) + (i + 1);
+
+
+            px3 = wn + (i + 1) * wn;
+            py3 = hn + j * hn;
+            idx3 = (j * simulation->get_dim()) + (i + 1);
+
+
+            set_colormap(simulation->get_rhof(idx0));    glVertex2f(px0, py0);
+            set_colormap(simulation->get_rhof(idx1));    glVertex2f(px1, py1);
+            set_colormap(simulation->get_rhof(idx2));    glVertex2f(px2, py2);
+
+
+            set_colormap(simulation->get_rhof(idx0));    glVertex2f(px0, py0);
+            set_colormap(simulation->get_rhof(idx2));    glVertex2f(px2, py2);
+            set_colormap(simulation->get_rhof(idx3));    glVertex2f(px3, py3);
+        }
+    }
+    glEnd();
+}
+
 //visualize: This is the main visualization function
 void Visualization::visualize()
 {
-    int        i, j, idx; double px,py;
-    double  wn = static_cast<double>(width()) / static_cast<double>(simulation->get_dim() + 1);   // Grid cell width
-    double  hn = static_cast<double>(height()) / static_cast<double>(simulation->get_dim() + 1);  // Grid cell heigh
+    float  wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1);   // Grid cell width
+    float  hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1);  // Grid cell heigh
 
     if (draw_smoke)
-    {
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    for (j = 0; j < simulation->get_dim() - 1; j++)			//draw smoke
-    {
-        glBegin(GL_TRIANGLE_STRIP);
-
-        i = 0;
-        px = wn + static_cast<double>(i) * wn;
-        py = hn + static_cast<double>(j) * hn;
-        idx = (j * simulation->get_dim()) + i;
-        glColor3f(simulation->get_rho(idx), simulation->get_rho(idx), simulation->get_rho(idx));
-        glVertex2f(px,py);
-
-        for (i = 0; i < simulation->get_dim() - 1; i++)
-        {
-            px = wn + static_cast<double>(i) * wn;
-            py = hn + static_cast<double>(j + 1) * hn;
-            idx = ((j + 1) * simulation->get_dim()) + i;
-            set_colormap(simulation->get_rho(idx));
-            glVertex2f(px, py);
-            px = wn + static_cast<double>(i + 1) * wn;
-            py = hn + static_cast<double>(j) * hn;
-            idx = (j * simulation->get_dim()) + (i + 1);
-            set_colormap(simulation->get_rho(idx));
-            glVertex2f(px, py);
-        }
-
-        px = wn + static_cast<double>(simulation->get_dim() - 1) * wn;
-        py = hn + static_cast<double>(j + 1) * hn;
-        idx = ((j + 1) * simulation->get_dim()) + (simulation->get_dim() - 1);
-        set_colormap(simulation->get_rho(idx));
-        glVertex2f(px, py);
-        glEnd();
-    }
-    }
+        paintSmoke(wn, hn);
 
     if (draw_vecs)
-    {
-      glBegin(GL_LINES);				//draw velocities
-      for (i = 0; i < simulation->get_dim(); i++)
-        for (j = 0; j < simulation->get_dim(); j++)
-        {
-          idx = (j * simulation->get_dim()) + i;
-          direction_to_color(simulation->get_vx(idx), simulation->get_vy(idx), color_dir);
-          glVertex2f(wn + static_cast<double>(i) * wn, hn + static_cast<double>(j) * hn);
-          glVertex2f((wn + static_cast<double>(i) * wn) + vec_scale * simulation->get_vx(idx), (hn + static_cast<double>(j) * hn) + vec_scale * simulation->get_vy(idx));
-        }
-      glEnd();
-    }
+        paintVectors(wn, hn);
 }
 
 
@@ -156,7 +170,7 @@ void Visualization::paintGL()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, (GLdouble)width(), 0.0, (GLdouble)height(), -1, 1);
+    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -1, 1);
     visualize();
     glFlush();
 }
@@ -164,9 +178,7 @@ void Visualization::paintGL()
 
 void Visualization::mouseMoveEvent(QMouseEvent *event)
 {
-    float mx = event->localPos().x();
-    float my = event->localPos().y();
-    simulation->drag(mx,my, width(), height());
+    simulation->drag(event->x(),event->y(), width(), height());
 }
 
 
