@@ -26,6 +26,8 @@ public:
     double get_vx0(int idx);
     double get_vy0(int idx);
 
+    void set_viscosity(float viscosity);
+    void set_dt(double new_dt);
 
     //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
     double dt = 0.4;				//simulation time step

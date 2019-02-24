@@ -231,3 +231,13 @@ double Simulation::get_vy0(int idx)
 {
     return vy0[idx];
 }
+
+void Simulation::set_viscosity(float viscosity)
+{
+    visc = viscosity;
+}
+
+void Simulation::set_dt(double new_dt)
+{
+    dt = new_dt;
+}

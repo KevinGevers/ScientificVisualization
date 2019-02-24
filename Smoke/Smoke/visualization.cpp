@@ -16,7 +16,6 @@ Visualization::Visualization(QWidget *parent) : QOpenGLWidget(parent)
     QTimer *timer = new QTimer;
     timer->start();
     QObject::connect(timer,SIGNAL(timeout()),this,SLOT(do_one_simulation_step()));
-    simulation->drag(10,10, width(), height());
 }
 
 
@@ -48,12 +47,15 @@ void Visualization::set_colormap(float vy)
        R = G = B = vy;
    else if (scalar_col==COLOR_RAINBOW)
        rainbow(vy,&R,&G,&B);
-   else if (scalar_col==COLOR_BANDS)
-       {
-          const int NLEVELS = 7;
-          vy *= NLEVELS; vy = static_cast<int>(vy); vy/= NLEVELS;
-          rainbow(vy,&R,&G,&B);
-       }
+   else if (scalar_col==COLOR_BANDS) {
+      const int NLEVELS = 7;
+      vy *= NLEVELS; vy = static_cast<int>(vy); vy/= NLEVELS;
+      rainbow(vy,&R,&G,&B);
+   }
+   else if (scalar_col==COLOR_WHITETORED) {
+      R = 1.0f;
+      G = B = 1.0f - vy;
+   }
    else
        rainbow(vy,&R,&G,&B);
 
@@ -85,9 +87,8 @@ void Visualization::direction_to_color(float x, float y, int method)
 }
 
 //visualize: This is the main visualization function
-void Visualization::visualize(void)
+void Visualization::visualize()
 {
-    qDebug() << "visualize";
     int        i, j, idx; double px,py;
     double  wn = static_cast<double>(width()) / static_cast<double>(simulation->get_dim() + 1);   // Grid cell width
     double  hn = static_cast<double>(height()) / static_cast<double>(simulation->get_dim() + 1);  // Grid cell heigh
@@ -97,8 +98,7 @@ void Visualization::visualize(void)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     for (j = 0; j < simulation->get_dim() - 1; j++)			//draw smoke
     {
-//        glBegin(GL_TRIANGLE_STRIP);
-        glBegin(GL_TRIANGLES);
+        glBegin(GL_TRIANGLE_STRIP);
 
         i = 0;
         px = wn + static_cast<double>(i) * wn;
@@ -154,92 +154,12 @@ void Visualization::initializeGL()
 
 void Visualization::paintGL()
 {
-//    glViewport(0.0f, 0.0f, width(), height());
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0.0, (GLdouble)width(), 0.0, (GLdouble)height(), -1, 1);
-
-
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
     visualize();
     glFlush();
 }
-
-
-//void Visualization::paintGL()
-//{
-//        glMatrixMode(GL_PROJECTION);
-//        glLoadIdentity();
-//        glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-//    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//    glMatrixMode(GL_MODELVIEW);
-//    glLoadIdentity();
-
-//    glShadeModel(GL_SMOOTH);
-//    glEnable(GL_LIGHTING);
-//    glEnable(GL_LIGHT0);
-//    float light[4] = {1,1,1,0};
-//    glLightfv(GL_LIGHT0, GL_POSITION, light);
-//    glEnable(GL_COLOR_MATERIAL);
-//    visualize();
-//    glMatrixMode(GL_PROJECTION);
-//    glLoadIdentity();
-//    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-//    glFlush();
-//}
-
-//------ INTERACTION CODE STARTS HERE -----------------------------------------------------------------
-
-/*display: Handle window redrawing events. Simply delegates to visualize().
-void Visualization::display(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    visualize();
-    glFlush();
-//    glutSwapBuffers();
-}
-
-//reshape: Handle window resizing (reshaping) events
-void Visualization::reshape(int w, int h)
-{
-    glViewport(0.0f, 0.0f, (GLfloat)w, (GLfloat)h);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-//    gluOrtho2D(0.0, (GLdouble)w, 0.0, (GLdouble)h);
-    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -1, 1);
-    winWidth = w; winHeight = h;
-}
-
-//keyboard: Handle key presses
-void Visualization::keyboard(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-      case 't': dt -= 0.001; break;
-      case 'T': dt += 0.001; break;
-      case 'c': color_dir = 1 - color_dir; break;
-      case 'S': vec_scale *= 1.2; break;
-      case 's': vec_scale *= 0.8; break;
-      case 'V': visc *= 5; break;
-      case 'v': visc *= 0.2; break;
-      case 'x': draw_smoke = 1 - draw_smoke;
-            if (draw_smoke==0) draw_vecs = 1; break;
-      case 'y': draw_vecs = 1 - draw_vecs;
-            if (draw_vecs==0) draw_smoke = 1; break;
-      case 'm': scalar_col++; if (scalar_col>COLOR_BANDS) scalar_col=COLOR_BLACKWHITE; break;
-      case 'a': frozen = 1-frozen; break;
-      case 'q': exit(0);
-    }
-}
-
-
-*/
-// drag: When the user drags with the mouse, add a force that corresponds to the direction of the mouse
-//       cursor movement. Also inject some new matter into the field at the mouse location.
 
 
 void Visualization::mouseMoveEvent(QMouseEvent *event)
@@ -247,4 +167,41 @@ void Visualization::mouseMoveEvent(QMouseEvent *event)
     float mx = event->localPos().x();
     float my = event->localPos().y();
     simulation->drag(mx,my, width(), height());
+}
+
+
+Simulation *Visualization::get_simulation()
+{
+    return simulation;
+}
+
+void Visualization::set_draw_vectors(int state)
+{
+    draw_vecs = state;
+}
+
+void Visualization::set_vector_colors(int state)
+{
+    color_dir = state;
+}
+
+void Visualization::set_vector_scale(int scale)
+{
+    vec_scale = scale;
+}
+
+void Visualization::set_draw_smoke(int state)
+{
+    draw_smoke = state;
+}
+
+void Visualization::set_smoke_colors(int mode)
+{
+    scalar_col = mode;
+}
+
+int Visualization::toggle_frozen()
+{
+    frozen = 1 - frozen;
+    return frozen;
 }
