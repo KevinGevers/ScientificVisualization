@@ -36,6 +36,10 @@ private slots:
 
     void on_playPauzeButton_clicked();
 
+    void actionPauze();
+
+    void actionSave();
+
 private:
     Ui::SmokeWindow *ui;
 };

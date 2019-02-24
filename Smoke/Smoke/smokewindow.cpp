@@ -1,5 +1,6 @@
 #include "smokewindow.h"
 #include "ui_smokewindow.h"
+#include <QFileDialog>
 #include <QDebug>
 
 SmokeWindow::SmokeWindow(QWidget *parent) :
@@ -7,6 +8,8 @@ SmokeWindow::SmokeWindow(QWidget *parent) :
     ui(new Ui::SmokeWindow)
 {
     ui->setupUi(this);
+    connect(ui->actionSave, &QAction::triggered, this, &SmokeWindow::actionSave);
+    connect(ui->actionPauze, &QAction::triggered, this, &SmokeWindow::actionPauze);
 }
 
 SmokeWindow::~SmokeWindow()
@@ -61,10 +64,29 @@ void SmokeWindow::on_vectorScale_valueChanged(int value)
 
 void SmokeWindow::on_playPauzeButton_clicked()
 {
+    actionPauze();
+}
+
+void SmokeWindow::actionPauze()
+{
     int state = ui->VisualizationWidget->toggle_frozen();
 
-    if (state == 1)
+    if (state == 0) {
         ui->playPauzeButton->setText("Pauze");
-    else
+        ui->actionPauze->setText("Pauze");
+    } else {
         ui->playPauzeButton->setText("Play");
+        ui->actionPauze->setText("Play");
+    }
+}
+
+void SmokeWindow::actionSave()
+{
+    actionPauze();
+    QString file = QFileDialog::getSaveFileName(this, "Save mesh", "", tr("PNG (*.png)" ));
+    if (!file.isEmpty()){
+        QImage img = ui->VisualizationWidget->grabFramebuffer();
+        img.save(file);
+        actionPauze();
+    }
 }
