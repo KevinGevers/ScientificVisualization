@@ -90,3 +90,29 @@ void SmokeWindow::actionSave()
         actionPauze();
     }
 }
+
+void SmokeWindow::on_NumberColors_valueChanged(int value)
+{
+    //TODO: Change number of colors based on this
+    //Colors range from 2 to 256
+}
+
+void SmokeWindow::on_Saturation_valueChanged(int value)
+{
+    //TODO: Change saturation based on this
+}
+
+void SmokeWindow::on_Hue_valueChanged(int value)
+{
+    //TODO: Change Hue based on this
+}
+
+void SmokeWindow::on_horizontalSlider_valueChanged(int value)
+{
+    //TODO: Change minimal value of clipping to this
+}
+
+void SmokeWindow::on_horizontalSlider_2_valueChanged(int value)
+{
+    //TODO: Change maximal value of clipping to this
+}
