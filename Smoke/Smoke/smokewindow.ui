@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>645</width>
-    <height>457</height>
+    <width>764</width>
+    <height>599</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -165,7 +165,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QGroupBox" name="VectorBox">
+              <widget class="QGroupBox" name="GlyphsBox">
                <property name="enabled">
                 <bool>true</bool>
                </property>
@@ -176,7 +176,7 @@
                 </sizepolicy>
                </property>
                <property name="title">
-                <string>Vectors</string>
+                <string>Glyphs</string>
                </property>
                <property name="checkable">
                 <bool>false</bool>
@@ -200,7 +200,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_4">
+                 <widget class="QLabel" name="ScaleLabel">
                   <property name="text">
                    <string>Scale</string>
                   </property>
@@ -219,6 +219,130 @@
                   </property>
                   <property name="value">
                    <number>1000</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="ShapeLabel">
+                  <property name="text">
+                   <string>Shape</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="Shape">
+                  <item>
+                   <property name="text">
+                    <string>Hedgehogs</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Cones</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Arrows</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="VectorFieldLabel">
+                  <property name="text">
+                   <string>Vector field</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="VectorField">
+                  <item>
+                   <property name="text">
+                    <string>Velocity</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Force</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="ColorBasedOnLabel">
+                  <property name="text">
+                   <string>Color based on</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QComboBox" name="ColorBasedOn">
+                  <item>
+                   <property name="text">
+                    <string>None</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Density</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Fluid velocity magnitude</string>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>Forcefield magnitude</string>
+                   </property>
+                  </item>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="XSamplingLabel">
+                  <property name="text">
+                   <string>X Sampling</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="GlyphXSampler">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>50</number>
+                  </property>
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QLabel" name="YSamplingLabel">
+                  <property name="text">
+                   <string>Y Sampling</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QSlider" name="GlyphYSampler">
+                  <property name="minimum">
+                   <number>1</number>
+                  </property>
+                  <property name="maximum">
+                   <number>100</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>50</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -282,7 +406,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_3">
+                 <widget class="QLabel" name="ColorMapLabel">
                   <property name="text">
                    <string>Colour map</string>
                   </property>
@@ -311,7 +435,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="NumberColors_2">
+                 <widget class="QLabel" name="NumberColorsLabel">
                   <property name="text">
                    <string>Number of Colors</string>
                   </property>
@@ -383,28 +507,28 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label">
+                 <widget class="QLabel" name="MinClippingLabel">
                   <property name="text">
                    <string>Min Clipping</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="horizontalSlider">
+                 <widget class="QSlider" name="MinClipping">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="label_2">
+                 <widget class="QLabel" name="MaxClippingLabel">
                   <property name="text">
                    <string>Max Clipping</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="horizontalSlider_2">
+                 <widget class="QSlider" name="MaxClipping">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -452,7 +576,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>645</width>
+     <width>764</width>
      <height>22</height>
     </rect>
    </property>

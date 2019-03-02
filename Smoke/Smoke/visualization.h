@@ -36,6 +36,11 @@ public:
     void set_saturation(float new_saturation);
     void set_number_colors(int value);
     void correctColor(float *R, float *G, float *B);
+    void set_glyph_x_amount(int value);
+    void set_glyph_y_amount(int value);
+    void set_shape(int option);
+    void set_vector_field(int option);
+    void set_color_based_on(int option);
 public slots:
     void do_one_simulation_step();
 
@@ -53,6 +58,11 @@ private:
     float hue = 0.0;
     float saturation = 1.0;
     int nlevels = 256;
+    int glyphXAmount = 50;
+    int glyphYAmount = 50;
+    int shape = 0;
+    int vectorField = 0;
+    int colorBasedOn = 0;
 
     //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
     int   color_dir = 0;            //use direction color-coding or not
