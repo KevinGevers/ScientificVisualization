@@ -78,18 +78,17 @@ void SmokeWindow::actionSave()
 
 void SmokeWindow::on_NumberColors_valueChanged(int value)
 {
-    //TODO: Change number of colors based on this
-    //Colors range from 2 to 256
+    ui->VisualizationWidget->set_number_colors(value);
 }
 
 void SmokeWindow::on_Saturation_valueChanged(int value)
 {
-    //TODO: Change saturation based on this
+    ui->VisualizationWidget->set_saturation(value / 1000.0f);
 }
 
 void SmokeWindow::on_Hue_valueChanged(int value)
 {
-    //TODO: Change Hue based on this
+    ui->VisualizationWidget->set_hue(value / 1000.0f);
 }
 
 void SmokeWindow::on_horizontalSlider_valueChanged(int value)

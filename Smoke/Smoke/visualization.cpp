@@ -1,9 +1,9 @@
 #include <stdio.h>              //for printing the help text
 #include <stdlib.h>
 #include <math.h>               //for various math functions
-#include <math.h>
 #include "visualization.h"
 #include <QDebug>
+#include <QColor>
 
 #include <QTimer>
 
@@ -37,28 +37,37 @@ void Visualization::rainbow(float value,float* R,float* G,float* B)
    *G = max(0.0f,(4-fabs(value-2)-fabs(value-4))/2);
    *B = max(0.0f,(3-fabs(value-1)-fabs(value-2))/2);
 }
+//correctColor: converst the RGB values to HSV and adjusts for the set Hue and Saturation.
+// Then changes it back to RGB values.
+void Visualization::correctColor(float *R, float *G, float *B)
+{
+    QColor color = QColor::fromRgbF(*R, *G, *B);
+    float new_hue = fmod(hue + color.hueF(), 1.0);
+    color.setHsvF(new_hue,saturation,color.valueF());
+    *R = color.redF();
+    *G = color.greenF();
+    *B = color.blueF();
+}
+
 
 //set_colormap: Sets three different types of colormaps
 void Visualization::set_colormap(float vy)
 {
    float R,G,B;
-
-   if (scalar_col==COLOR_BLACKWHITE)
+   vy *= nlevels; vy = static_cast<int>(vy); vy/= nlevels;
+   if (scalar_col==COLOR_BLACKWHITE) {
        R = G = B = vy;
-   else if (scalar_col==COLOR_RAINBOW)
+       glColor3f(R,G,B);
+       return;
+   } else if (scalar_col==COLOR_RAINBOW)
        rainbow(vy,&R,&G,&B);
-   else if (scalar_col==COLOR_BANDS) {
-      const int NLEVELS = 7;
-      vy *= NLEVELS; vy = static_cast<int>(vy); vy/= NLEVELS;
-      rainbow(vy,&R,&G,&B);
-   }
    else if (scalar_col==COLOR_WHITETORED) {
       R = 1.0f;
       G = B = 1.0f - vy;
    }
    else
        rainbow(vy,&R,&G,&B);
-
+   correctColor(&R, &G, &B);
    glColor3f(R,G,B);
 }
 
@@ -243,6 +252,21 @@ void Visualization::set_draw_smoke(int state)
 void Visualization::set_smoke_colors(int mode)
 {
     scalar_col = mode;
+}
+
+void Visualization::set_hue(float new_hue)
+{
+    hue = new_hue;
+}
+
+void Visualization::set_saturation(float new_saturation)
+{
+    saturation = new_saturation;
+}
+
+void Visualization::set_number_colors(int value)
+{
+    nlevels = value;
 }
 
 int Visualization::toggle_frozen()

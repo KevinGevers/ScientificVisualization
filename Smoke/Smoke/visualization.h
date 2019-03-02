@@ -32,20 +32,10 @@ public:
     void set_draw_smoke(int state);
     void set_smoke_colors(int mode);
     int toggle_frozen();
-
-    //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
-    int   color_dir = 0;            //use direction color-coding or not
-    float vec_scale = 1000;			//scaling of hedgehogs
-    int   draw_smoke = 0;           //draw the smoke or not
-    int   draw_vecs = 1;            //draw the vector field or not
-    int   draw_scale = 1;
-    const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
-    const int COLOR_RAINBOW=1;
-    const int COLOR_BANDS=2;
-    const int COLOR_WHITETORED=3;
-    int   scalar_col = 0;           //method for scalar coloring
-    int   frozen = 0;               //toggles on/off the animation
-
+    void set_hue(float new_hue);
+    void set_saturation(float new_saturation);
+    void set_number_colors(int value);
+    void correctColor(float *R, float *G, float *B);
 public slots:
     void do_one_simulation_step();
 
@@ -60,7 +50,22 @@ protected:
     void paintLegend(float wn, float hn);
 private:
     Simulation* simulation;
+    float hue = 0.0;
+    float saturation = 1.0;
+    int nlevels = 256;
 
+    //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
+    int   color_dir = 0;            //use direction color-coding or not
+    float vec_scale = 1000;			//scaling of hedgehogs
+    int   draw_smoke = 0;           //draw the smoke or not
+    int   draw_vecs = 1;            //draw the vector field or not
+    int   draw_scale = 1;
+    const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
+    const int COLOR_RAINBOW=1;
+    const int COLOR_BANDS=2;
+    const int COLOR_WHITETORED=3;
+    int   scalar_col = 0;           //method for scalar coloring
+    int   frozen = 0;               //toggles on/off the animation
 };
 
 #endif // VISUALIZATION_H
