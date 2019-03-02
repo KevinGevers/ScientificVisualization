@@ -311,3 +311,28 @@ int Visualization::toggle_frozen()
     frozen = 1 - frozen;
     return frozen;
 }
+
+void Visualization::set_glyph_x_amount(int value)
+{
+    glyphXAmount = value;
+}
+
+void Visualization::set_glyph_y_amount(int value)
+{
+    glyphYAmount = value;
+}
+
+void Visualization::set_shape(int option)
+{
+    shape = option;
+}
+
+void Visualization::set_vector_field(int option)
+{
+    vectorField = option;
+}
+
+void Visualization::set_color_based_on(int option)
+{
+    colorBasedOn = option;
+}

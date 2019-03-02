@@ -36,11 +36,16 @@ public:
     void set_saturation(float new_saturation);
     void set_number_colors(int value);
     void correctColor(float *R, float *G, float *B);
+
     void set_scaled_colormap(float vy);
     void set_clipping_max(float value);
     void set_clipping_min(float value);
 
-
+    void set_glyph_x_amount(int value);
+    void set_glyph_y_amount(int value);
+    void set_shape(int option);
+    void set_vector_field(int option);
+    void set_color_based_on(int option);
 public slots:
     void do_one_simulation_step();
 
@@ -58,18 +63,23 @@ private:
     float hue = 0.0;
     float saturation = 1.0;
     int nlevels = 256;
+    int glyphXAmount = 50;
+    int glyphYAmount = 50;
+    int shape = 0;
+    int vectorField = 0;
+    int colorBasedOn = 0;
 
     //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
     int   color_dir = 0;            //use direction color-coding or not
     float vec_scale = 1000;			//scaling of hedgehogs
-    int   draw_smoke = 0;           //draw the smoke or not
-    int   draw_vecs = 1;            //draw the vector field or not
+    int   draw_smoke = 1;           //draw the smoke or not
+    int   draw_vecs = 0;            //draw the vector field or not
     int   draw_scale = 1;
     const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
     const int COLOR_RAINBOW=1;
     const int COLOR_BANDS=2;
     const int COLOR_WHITETORED=3;
-    int   scalar_col = 0;           //method for scalar coloring
+    int   scalar_col = 1;           //method for scalar coloring
     int   frozen = 0;               //toggles on/off the animation
     float clipping_min = 0;
     float clipping_max = 1;

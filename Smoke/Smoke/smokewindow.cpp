@@ -111,3 +111,43 @@ void SmokeWindow::on_ClippingMax_valueChanged(int value)
 {
     ui->VisualizationWidget->set_clipping_max(value / 1000.0f);
 }
+
+void SmokeWindow::on_GlyphXSampler_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_glyph_x_amount(value);
+}
+
+void SmokeWindow::on_GlyphYSampler_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_glyph_y_amount(value);
+}
+
+void SmokeWindow::on_Shape_currentIndexChanged(const QString &option)
+{
+    if (option.compare("Hedgehogs") == 0)
+        ui->VisualizationWidget->set_shape(0);
+    else if (option.compare("Cones") == 0)
+        ui->VisualizationWidget->set_shape(1);
+    else if (option.compare("Arrows") == 0)
+        ui->VisualizationWidget->set_shape(2);
+}
+
+void SmokeWindow::on_VectorField_currentIndexChanged(const QString &option)
+{
+    if (option.compare("Velocity") == 0)
+        ui->VisualizationWidget->set_vector_field(0);
+    else if (option.compare("Force") == 0)
+        ui->VisualizationWidget->set_vector_field(1);
+}
+
+void SmokeWindow::on_ColorBasedOn_currentIndexChanged(const QString &option)
+{
+    if (option.compare("None") == 0)
+        ui->VisualizationWidget->set_color_based_on(0);
+    else if (option.compare("Density") == 0)
+        ui->VisualizationWidget->set_color_based_on(1);
+    else if (option.compare("Fluid velocity magnitude") == 0)
+        ui->VisualizationWidget->set_color_based_on(2);
+    else if (option.compare("Force field magnitude") == 0)
+        ui->VisualizationWidget->set_color_based_on(3);
+}

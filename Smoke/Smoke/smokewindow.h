@@ -46,6 +46,16 @@ private slots:
 
     void on_ClippingMax_valueChanged(int value);
 
+    void on_GlyphXSampler_valueChanged(int value);
+
+    void on_GlyphYSampler_valueChanged(int value);
+
+    void on_Shape_currentIndexChanged(const QString &option);
+
+    void on_VectorField_currentIndexChanged(const QString &option);
+
+    void on_ColorBasedOn_currentIndexChanged(const QString &option);
+
 private:
     Ui::SmokeWindow *ui;
 };
