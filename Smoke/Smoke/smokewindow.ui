@@ -319,14 +319,17 @@
                   <property name="maximum">
                    <number>256</number>
                   </property>
+                  <property name="sliderPosition">
+                   <number>256</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::TicksBelow</enum>
+                   <enum>QSlider::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
-                   <number>10</number>
+                   <number>1</number>
                   </property>
                  </widget>
                 </item>
@@ -339,6 +342,12 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="Saturation">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>1000</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -353,6 +362,15 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="Hue">
+                  <property name="maximum">
+                   <number>1000</number>
+                  </property>
+                  <property name="value">
+                   <number>0</number>
+                  </property>
+                  <property name="sliderPosition">
+                   <number>0</number>
+                  </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -429,7 +447,7 @@
      <x>0</x>
      <y>0</y>
      <width>645</width>
-     <height>17</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
