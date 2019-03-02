@@ -188,7 +188,7 @@
                    <string>Show</string>
                   </property>
                   <property name="checked">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
@@ -276,6 +276,9 @@
                   <property name="text">
                    <string>Show</string>
                   </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item>
@@ -287,6 +290,9 @@
                 </item>
                 <item>
                  <widget class="QComboBox" name="smokeColor">
+                  <property name="currentText">
+                   <string>Rainbow</string>
+                  </property>
                   <item>
                    <property name="text">
                     <string>Greyscale</string>
