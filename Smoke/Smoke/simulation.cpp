@@ -1,6 +1,7 @@
 #include <stdio.h>              //for printing the help text
 #include <stdlib.h>
 #include <math.h>               //for various math functions
+#include <limits>
 #include "simulation.h"
 
 Simulation::Simulation(int n)
@@ -51,9 +52,6 @@ void Simulation::FFT(int direction,void* vx)
 
 int Simulation::clamp(float x)
 { return ((x)>=0.0f?(static_cast<int>(x)):(-(static_cast<int>(1-(x))))); }
-
-float Simulation::max(float x, float y)
-{ return x < y ? y : x; }
 
 //solve: Solve (compute) one step of the fluid flow simulation
 void Simulation::solve(int n, double* vx, double* vy, double* vx0, double* vy0, double visc, double dt)
@@ -122,6 +120,9 @@ void Simulation::diffuse_matter(int n, double *vx, double *vy, double *rho, doub
     double x, y, x0, y0, s, t;
     int i, j, i0, j0, i1, j1;
 
+    rho_max = std::numeric_limits< double >::max();
+    rho_min = 0;
+
     for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n )
         for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n )
         {
@@ -135,7 +136,12 @@ void Simulation::diffuse_matter(int n, double *vx, double *vy, double *rho, doub
             t = y0-j0;
             j0 = (n+(j0%n))%n;
             j1 = (j0+1)%n;
+
             rho[i+n*j] = (1-s)*((1-t)*rho0[i0+n*j0]+t*rho0[i0+n*j1])+s*((1-t)*rho0[i1+n*j0]+t*rho0[i1+n*j1]);
+            if (rho[i+n*j] > max_rho)
+                max_rho = rho[i+n*j];
+            if (rho[i+n*j] < min_rho)
+                min_rho = rho[i+n*j];
         }
 }
 
@@ -200,6 +206,16 @@ int Simulation::get_dim()
 double Simulation::get_rho(int idx)
 {
     return rho[idx];
+}
+
+double Simulation::get_rho_max()
+{
+    return rho_max;
+}
+
+double Simulation::get_rho_min()
+{
+    return rho_min;
 }
 
 float Simulation::get_rhof(int idx)

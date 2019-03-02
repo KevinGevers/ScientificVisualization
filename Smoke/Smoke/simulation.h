@@ -30,6 +30,11 @@ public:
     void set_viscosity(float viscosity);
     void set_dt(double new_dt);
 
+    double get_rho_max();
+    double get_rho_min();
+private:
+    int dim;
+
     //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
     double dt = 0.4;				//simulation time step
     float visc = 0.001f;				//fluid viscosity
@@ -37,11 +42,8 @@ public:
     double *vx0, *vy0;           //(vx0,vy0) = velocity field at the previous moment
     double *fx, *fy;	            //(fx,fy)   = user-controlled simulation forces, steered with the mouse
     double *rho, *rho0;			//smoke density at the current (rho) and previous (rho0) moment
-//    rfftwnd_plan plan_rc, plan_cr;  //simulation domain discretization
-
-private:
-    int dim;
-
+    double rho_max;
+    double rho_min;
 };
 
 #endif // SIMULATION_H
