@@ -120,8 +120,8 @@ void Simulation::diffuse_matter(int n, double *vx, double *vy, double *rho, doub
     double x, y, x0, y0, s, t;
     int i, j, i0, j0, i1, j1;
 
-    rho_max = std::numeric_limits< double >::max();
-    rho_min = 0;
+    rho_min = std::numeric_limits< double >::max();
+    rho_max = 0;
 
     for ( x=0.5f/n,i=0 ; i<n ; i++,x+=1.0f/n )
         for ( y=0.5f/n,j=0 ; j<n ; j++,y+=1.0f/n )
@@ -138,10 +138,11 @@ void Simulation::diffuse_matter(int n, double *vx, double *vy, double *rho, doub
             j1 = (j0+1)%n;
 
             rho[i+n*j] = (1-s)*((1-t)*rho0[i0+n*j0]+t*rho0[i0+n*j1])+s*((1-t)*rho0[i1+n*j0]+t*rho0[i1+n*j1]);
-            if (rho[i+n*j] > max_rho)
-                max_rho = rho[i+n*j];
-            if (rho[i+n*j] < min_rho)
-                min_rho = rho[i+n*j];
+
+            if (rho[i+n*j] > rho_max)
+                rho_max = rho[i+n*j];
+            if (rho[i+n*j] < rho_min)
+                rho_min = rho[i+n*j];
         }
 }
 

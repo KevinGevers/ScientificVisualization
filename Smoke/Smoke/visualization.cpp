@@ -37,6 +37,7 @@ void Visualization::rainbow(float value,float* R,float* G,float* B)
    *G = max(0.0f,(4-fabs(value-2)-fabs(value-4))/2);
    *B = max(0.0f,(3-fabs(value-1)-fabs(value-2))/2);
 }
+
 //correctColor: converst the RGB values to HSV and adjusts for the set Hue and Saturation.
 // Then changes it back to RGB values.
 void Visualization::correctColor(float *R, float *G, float *B)
@@ -50,25 +51,51 @@ void Visualization::correctColor(float *R, float *G, float *B)
 }
 
 
-//set_colormap: Sets three different types of colormaps
-void Visualization::set_colormap(float vy)
+void Visualization::set_scaled_colormap(float vy)
 {
-   float R,G,B;
-   vy *= nlevels; vy = static_cast<int>(vy); vy/= nlevels;
-   if (scalar_col==COLOR_BLACKWHITE) {
+    float R,G,B;
+
+    vy *= nlevels; vy = static_cast<int>(vy); vy/= nlevels;
+
+    if (scalar_col==COLOR_BLACKWHITE) {
        R = G = B = vy;
        glColor3f(R,G,B);
        return;
-   } else if (scalar_col==COLOR_RAINBOW)
+    } else if (scalar_col==COLOR_RAINBOW)
        rainbow(vy,&R,&G,&B);
-   else if (scalar_col==COLOR_WHITETORED) {
+    else if (scalar_col==COLOR_WHITETORED) {
       R = 1.0f;
       G = B = 1.0f - vy;
-   }
-   else
+    } else
        rainbow(vy,&R,&G,&B);
-   correctColor(&R, &G, &B);
-   glColor3f(R,G,B);
+
+    correctColor(&R, &G, &B);
+    glColor3f(R,G,B);
+}
+
+float normalize(float val, float min, float max)
+{
+    return (val - min) / (max - min);
+}
+
+
+
+//set_colormap: Sets three different types of colormaps
+void Visualization::set_colormap(float vy)
+{
+    double max = simulation->get_rho_max();
+    double min = simulation->get_rho_min();
+
+    vy = normalize(vy, min, max);
+
+    if (vy < clipping_min)
+        vy = clipping_min;
+    else if (vy > clipping_max)
+        vy = clipping_max;
+
+    vy = normalize(vy, clipping_min, clipping_max);
+//    qDebug() << vy << max << min;
+    set_scaled_colormap(vy);
 }
 
 
@@ -165,21 +192,21 @@ void Visualization::paintLegend(float wn, float hn)
 
     for (int i=0; i < res; i++)
     {
-        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
-        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+20, voffset + i * (hn/res));
-        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
+        set_scaled_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
+        set_scaled_colormap(i / static_cast<float>(res));      glVertex2f(wn+20, voffset + i * (hn/res));
+        set_scaled_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
 
-        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
-        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+0, voffset + (i+1) * (hn/res));
-        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
+        set_scaled_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
+        set_scaled_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+0, voffset + (i+1) * (hn/res));
+        set_scaled_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
     }
     glEnd();
 
     glBegin(GL_LINE_LOOP);
-    set_colormap(1.0);
+    set_scaled_colormap(1.0);
     glVertex2f(wn + 0, voffset);
     glVertex2f(wn + 20, voffset);
-    set_colormap(0.0);
+    set_scaled_colormap(0.0);
     glVertex2f(wn + 20, voffset + hn);
     glVertex2f(wn + 0, voffset + hn);
     glEnd();
@@ -267,6 +294,16 @@ void Visualization::set_saturation(float new_saturation)
 void Visualization::set_number_colors(int value)
 {
     nlevels = value;
+}
+
+void Visualization::set_clipping_max(float value)
+{
+    clipping_max = value;
+}
+
+void Visualization::set_clipping_min(float value)
+{
+    clipping_min = value;
 }
 
 int Visualization::toggle_frozen()

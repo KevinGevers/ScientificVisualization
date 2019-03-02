@@ -36,6 +36,11 @@ public:
     void set_saturation(float new_saturation);
     void set_number_colors(int value);
     void correctColor(float *R, float *G, float *B);
+    void set_scaled_colormap(float vy);
+    void set_clipping_max(float value);
+    void set_clipping_min(float value);
+
+
 public slots:
     void do_one_simulation_step();
 
@@ -66,6 +71,8 @@ private:
     const int COLOR_WHITETORED=3;
     int   scalar_col = 0;           //method for scalar coloring
     int   frozen = 0;               //toggles on/off the animation
+    float clipping_min = 0;
+    float clipping_max = 1;
 };
 
 #endif // VISUALIZATION_H

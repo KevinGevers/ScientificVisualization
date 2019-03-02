@@ -91,16 +91,6 @@ void SmokeWindow::on_Hue_valueChanged(int value)
     ui->VisualizationWidget->set_hue(value / 1000.0f);
 }
 
-void SmokeWindow::on_horizontalSlider_valueChanged(int value)
-{
-    //TODO: Change minimal value of clipping to this
-}
-
-void SmokeWindow::on_horizontalSlider_2_valueChanged(int value)
-{
-    //TODO: Change maximal value of clipping to this
-}
-
 void SmokeWindow::on_smokeColor_currentIndexChanged(const QString &option)
 {
     if (option.compare("Rainbow") == 0)
@@ -110,4 +100,14 @@ void SmokeWindow::on_smokeColor_currentIndexChanged(const QString &option)
     else
         // Greyscale
         ui->VisualizationWidget->set_smoke_colors(0);
+}
+
+void SmokeWindow::on_ClippingMin_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_clipping_min(value / 1000.0f);
+}
+
+void SmokeWindow::on_ClippingMax_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_clipping_max(value / 1000.0f);
 }

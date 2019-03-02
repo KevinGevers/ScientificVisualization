@@ -40,11 +40,11 @@ private slots:
 
     void on_Hue_valueChanged(int value);
 
-    void on_horizontalSlider_valueChanged(int value);
-
-    void on_horizontalSlider_2_valueChanged(int value);
-
     void on_smokeColor_currentIndexChanged(const QString &option);
+
+    void on_ClippingMin_valueChanged(int value);
+
+    void on_ClippingMax_valueChanged(int value);
 
 private:
     Ui::SmokeWindow *ui;
