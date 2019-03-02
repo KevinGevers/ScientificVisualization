@@ -38,6 +38,7 @@ public:
     float vec_scale = 1000;			//scaling of hedgehogs
     int   draw_smoke = 0;           //draw the smoke or not
     int   draw_vecs = 1;            //draw the vector field or not
+    int   draw_scale = 1;
     const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
     const int COLOR_RAINBOW=1;
     const int COLOR_BANDS=2;
@@ -56,6 +57,7 @@ protected:
 
     void paintSmoke(float wn, float hn);
     void paintVectors(float wn, float hn);
+    void paintLegend(float wn, float hn);
 private:
     Simulation* simulation;
 

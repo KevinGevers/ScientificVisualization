@@ -32,21 +32,6 @@ void SmokeWindow::on_showSmoke_stateChanged(int state)
     ui->VisualizationWidget->set_draw_smoke(state/2);
 }
 
-void SmokeWindow::on_smokeColor0_clicked()
-{
-    ui->VisualizationWidget->set_smoke_colors(0);
-}
-
-void SmokeWindow::on_smokeColor1_clicked()
-{
-    ui->VisualizationWidget->set_smoke_colors(1);
-}
-
-void SmokeWindow::on_smokeColor3_clicked()
-{
-    ui->VisualizationWidget->set_smoke_colors(3);
-}
-
 void SmokeWindow::on_viscositySlider_valueChanged(int value)
 {
     ui->VisualizationWidget->get_simulation()->set_viscosity((value + 1) / 1000.0f);
@@ -115,4 +100,15 @@ void SmokeWindow::on_horizontalSlider_valueChanged(int value)
 void SmokeWindow::on_horizontalSlider_2_valueChanged(int value)
 {
     //TODO: Change maximal value of clipping to this
+}
+
+void SmokeWindow::on_smokeColor_currentIndexChanged(const QString &option)
+{
+    if (option.compare("Rainbow") == 0)
+        ui->VisualizationWidget->set_smoke_colors(1);
+    else if (option.compare("White-to-red") == 0)
+        ui->VisualizationWidget->set_smoke_colors(3);
+    else
+        // Greyscale
+        ui->VisualizationWidget->set_smoke_colors(0);
 }

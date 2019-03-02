@@ -132,7 +132,6 @@ void Visualization::paintSmoke(float wn, float hn)
             py3 = hn + j * hn;
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
-
             set_colormap(simulation->get_rhof(idx0));    glVertex2f(px0, py0);
             set_colormap(simulation->get_rhof(idx1));    glVertex2f(px1, py1);
             set_colormap(simulation->get_rhof(idx2));    glVertex2f(px2, py2);
@@ -143,6 +142,37 @@ void Visualization::paintSmoke(float wn, float hn)
             set_colormap(simulation->get_rhof(idx3));    glVertex2f(px3, py3);
         }
     }
+    glEnd();
+}
+
+void Visualization::paintLegend(float wn, float hn)
+{
+    int res = 100;
+    float voffset = height() * .125f;
+    hn = height() * 0.75f;
+
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+
+    for (int i=0; i < res; i++)
+    {
+        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
+        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+20, voffset + i * (hn/res));
+        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
+
+        set_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
+        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+0, voffset + (i+1) * (hn/res));
+        set_colormap((i+1) / static_cast<float>(res));  glVertex2f(wn+20, voffset + (i+1) * (hn/res));
+    }
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    set_colormap(1.0);
+    glVertex2f(wn + 0, voffset);
+    glVertex2f(wn + 20, voffset);
+    set_colormap(0.0);
+    glVertex2f(wn + 20, voffset + hn);
+    glVertex2f(wn + 0, voffset + hn);
     glEnd();
 }
 
@@ -157,6 +187,9 @@ void Visualization::visualize()
 
     if (draw_vecs)
         paintVectors(wn, hn);
+
+    if (draw_scale)
+        paintLegend(wn, hn);
 }
 
 

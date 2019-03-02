@@ -22,12 +22,6 @@ private slots:
 
     void on_showSmoke_stateChanged(int arg1);
 
-    void on_smokeColor0_clicked();
-
-    void on_smokeColor1_clicked();
-
-    void on_smokeColor3_clicked();
-
     void on_viscositySlider_valueChanged(int value);
 
     void on_timestepSlider_valueChanged(int value);
@@ -49,6 +43,8 @@ private slots:
     void on_horizontalSlider_valueChanged(int value);
 
     void on_horizontalSlider_2_valueChanged(int value);
+
+    void on_smokeColor_currentIndexChanged(const QString &option);
 
 private:
     Ui::SmokeWindow *ui;
