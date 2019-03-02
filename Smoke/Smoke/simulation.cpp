@@ -244,6 +244,16 @@ float Simulation::get_vyf(int idx)
     return static_cast<float>(vy[idx]);
 }
 
+float Simulation::get_fxf(int idx)
+{
+    return static_cast<float>(fx[idx]);
+}
+
+float Simulation::get_fyf(int idx)
+{
+    return static_cast<float>(fy[idx]);
+}
+
 void Simulation::set_viscosity(float viscosity)
 {
     visc = viscosity;

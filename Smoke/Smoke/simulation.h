@@ -32,6 +32,8 @@ public:
 
     double get_rho_max();
     double get_rho_min();
+    float get_fxf(int idx);
+    float get_fyf(int idx);
 private:
     int dim;
 

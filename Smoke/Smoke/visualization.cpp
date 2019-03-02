@@ -125,17 +125,31 @@ void Visualization::direction_to_color(float x, float y, int method)
 void Visualization::paintVectors(float wn, float hn)
 {
     int idx;
-
-    glBegin(GL_LINES);				//draw velocities
+    float xData, yData;
+    glBegin(GL_LINES);
+    // This draws a glyph for every raster point in the set dimension (standard is 50)
+    // We will need to alter this so it's adjustable
     for (int i = 0; i < simulation->get_dim(); i++)
-      for (int j = 0; j < simulation->get_dim(); j++)
-      {
-        idx = (j * simulation->get_dim()) + i;
-        direction_to_color(simulation->get_vxf(idx), simulation->get_vyf(idx), color_dir);
-        glVertex2f(wn + i * wn, hn + j * hn);
-        glVertex2f((wn + i * wn) + vec_scale * simulation->get_vxf(idx), (hn + j * hn) + vec_scale * simulation->get_vyf(idx));
-      }
-    glEnd();
+        for (int j = 0; j < simulation->get_dim(); j++)
+        {
+            idx = (j * simulation->get_dim()) + i;
+            if (vectorField) // force field f
+            {
+                xData = simulation->get_fxf(idx);
+                yData = simulation->get_fyf(idx);
+            } else // fluid velocity v
+            {
+                xData = simulation->get_vxf(idx);
+                yData = simulation->get_vyf(idx);
+            }
+            //The line below has all control over the color of the glyph
+            direction_to_color(xData, yData, color_dir);
+            //The line below has all control over the moving of the glyphs
+            glVertex2f(wn + i * wn, hn + j * hn);
+            //The line below has all control over the placement of the glyphs
+            glVertex2f((wn + i * wn) + vec_scale * xData, (hn + j * hn) + vec_scale * yData);
+        }
+        glEnd();
 }
 
 void Visualization::paintSmoke(float wn, float hn)
