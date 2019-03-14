@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QColor>
 #include <QPainter>
+#include <QVector3D>
+#include <QVector2D>
 
 #include <QTimer>
 
@@ -157,19 +159,42 @@ void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, flo
     printf("draw_arrows() is not yet implemented!\n");
 }
 
+float Visualization::interpolate(QVector3D target, QVector3D point1, QVector3D point2, QVector3D point3, QVector3D point4)
+{
+    float totalXdist, totalYdist, xDistTop, yDistTop, xDistBottom, yDistBottom, solution;
+    totalXdist = point2.x() - point1.x();
+    totalYdist = point3.y() - point1.y();
+    xDistTop = point2.x() - target.x();
+    yDistTop = point1.y() - target.y();
+    xDistBottom = target.x() - point3.x();
+    yDistBottom = target.y() - point3.y();
+    solution = 1/ (totalXdist*totalYdist) * (
+                point3.z() * xDistTop * yDistTop +
+                point4.z() * xDistBottom * yDistTop +
+                point1.z() * xDistTop * yDistBottom +
+                point2.z() * xDistBottom * yDistBottom
+                );
+    printf("%d, %d, %d, %d, becomes interpolated value = %d\n", point1.z(), point2.z(), point3.z(), point4.z(), solution);
+    return solution;
+}
 
 void Visualization::paintVectors(float wn, float hn)
 {
     int idx;
+    float adj_i, adj_j;
     QVector2D vector;
+    QVector3D point1, point2, point3, point4, target;
     glBegin(GL_LINES);
     // This draws a glyph for every raster point in the set dimension (standard is 50)
     // We will need to alter this so it's adjustable
     for (int i = 0; i < simulation->get_dim(); i++)
         for (int j = 0; j < simulation->get_dim(); j++)
         {
+            //adj_i = i/(float)glyphXAmount * simulation->get_dim();
+            //adj_j = j/(float)glyphYAmount * simulation->get_dim();
             idx = (j * simulation->get_dim()) + i;
             if (vectorField) // force field f
+                //point1 = QVector3D()
                 vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
             else // fluid velocity v
                 vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
@@ -185,6 +210,35 @@ void Visualization::paintVectors(float wn, float hn)
         }
         glEnd();
 }
+
+
+//void Visualization::paintVectors(float wn, float hn)
+//{
+//    int idx;
+//    QVector2D vector;
+//    glBegin(GL_LINES);
+//    // This draws a glyph for every raster point in the set dimension (standard is 50)
+//    // We will need to alter this so it's adjustable
+//    for (int i = 0; i < simulation->get_dim(); i++)
+//        for (int j = 0; j < simulation->get_dim(); j++)
+//        {
+//            idx = (j * simulation->get_dim()) + i;
+//            if (vectorField) // force field f
+//                vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
+//            else // fluid velocity v
+//                vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
+
+//            //The line below has all control over the color of the glyph
+//            direction_to_color(vector.x(), vector.y(), color_dir);
+
+//            switch(shape) {
+//                case 0: draw_hedgehogs(vector, wn, hn, i, j); break;
+//                case 1: draw_cones(vector, wn, hn, i, j); break;
+//                case 2: draw_arrows(vector, wn, hn, i, j); break;
+//            }
+//        }
+//        glEnd();
+//}
 
 void Visualization::paintSmoke(float wn, float hn)
 {
