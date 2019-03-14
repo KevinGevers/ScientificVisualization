@@ -133,10 +133,35 @@ void Visualization::direction_to_color(float x, float y, int method)
     glColor3f(r,g,b);
 }
 
+void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j)
+{
+    float x1 = wn + i * wn;
+    float y1 = hn + j * hn;
+    float x2 = (wn + i * wn) + vec_scale * data.x();
+    float y2 = (hn + j * hn) + vec_scale * data.y();
+    //The line below has all control over the moving of the glyphs
+    glVertex2f(x1,y1);
+    //The line below has all control over the placement of the glyphs
+    glVertex2f(x2,y2);
+}
+
+void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, float j)
+{
+    //TODO: implement the function
+    printf("draw_cones() is not yet implemented!\n");
+}
+
+void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, float j)
+{
+    //TODO: implement the function
+    printf("draw_arrows() is not yet implemented!\n");
+}
+
+
 void Visualization::paintVectors(float wn, float hn)
 {
     int idx;
-    float xData, yData;
+    QVector2D vector;
     glBegin(GL_LINES);
     // This draws a glyph for every raster point in the set dimension (standard is 50)
     // We will need to alter this so it's adjustable
@@ -145,20 +170,18 @@ void Visualization::paintVectors(float wn, float hn)
         {
             idx = (j * simulation->get_dim()) + i;
             if (vectorField) // force field f
-            {
-                xData = simulation->get_fxf(idx);
-                yData = simulation->get_fyf(idx);
-            } else // fluid velocity v
-            {
-                xData = simulation->get_vxf(idx);
-                yData = simulation->get_vyf(idx);
-            }
+                vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
+            else // fluid velocity v
+                vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
+
             //The line below has all control over the color of the glyph
-            direction_to_color(xData, yData, color_dir);
-            //The line below has all control over the moving of the glyphs
-            glVertex2f(wn + i * wn, hn + j * hn);
-            //The line below has all control over the placement of the glyphs
-            glVertex2f((wn + i * wn) + vec_scale * xData, (hn + j * hn) + vec_scale * yData);
+            direction_to_color(vector.x(), vector.y(), color_dir);
+
+            switch(shape) {
+                case 0: draw_hedgehogs(vector, wn, hn, i, j); break;
+                case 1: draw_cones(vector, wn, hn, i, j); break;
+                case 2: draw_arrows(vector, wn, hn, i, j); break;
+            }
         }
         glEnd();
 }
