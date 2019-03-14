@@ -62,6 +62,9 @@ protected:
     void paintSmoke(float wn, float hn);
     void paintVectors(float wn, float hn);
     void paintLegend(float wn, float hn);
+    void draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j);
+    void draw_cones(QVector2D data, float wn, float hn, float i, float j);
+    void draw_arrows(QVector2D data, float wn, float hn, float i, float j);
 private:
     Simulation* simulation;
     float hue = 0.0;
