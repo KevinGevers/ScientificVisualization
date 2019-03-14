@@ -46,7 +46,7 @@ void Visualization::rainbow(float value,float* R,float* G,float* B)
 void Visualization::correctColor(float *R, float *G, float *B)
 {
     QColor color = QColor::fromRgbF(*R, *G, *B);
-    float new_hue = fmod(color.hslHueF() + hue, 1.0);
+    float new_hue = fmod(abs(color.hslHueF() + hue), 1.0);
     color.setHslF(new_hue,saturation,color.lightnessF());
     *R = color.redF();
     *G = color.greenF();
@@ -107,6 +107,14 @@ void Visualization::set_colormap(float vy)
         vy = clipping_max;
 
     vy = normalize(vy, get_color_min(), get_color_max());
+
+    // 0.0 <= vy <= 1.0 should now hold. Make sure to fix this if not.
+
+    if (vy < 0.0)
+        vy = 0.0;
+
+    if (vy > 1.0)
+        vy = 1.0;
 
     set_scaled_colormap(vy);
 }
