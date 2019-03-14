@@ -87,7 +87,7 @@ private:
     int   frozen = 0;               //toggles on/off the animation
     int   scale_colors = 1;
     float clipping_min = 0;
-    float clipping_max = 10;
+    float clipping_max = 1;
 };
 
 #endif // VISUALIZATION_H
