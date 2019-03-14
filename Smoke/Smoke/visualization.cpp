@@ -106,6 +106,8 @@ void Visualization::set_colormap(float vy)
 
     vy = normalize(vy, get_color_min(), get_color_max());
 
+    // 0.0 <= vy <= 1.0 should now hold. Make sure to fix this if not.
+
     if (vy < 0.0)
         vy = 0.0;
 
