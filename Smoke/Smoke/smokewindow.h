@@ -56,6 +56,8 @@ private slots:
 
     void on_ColorBasedOn_currentIndexChanged(const QString &option);
 
+    void on_colorScaling_stateChanged(int arg1);
+
 private:
     Ui::SmokeWindow *ui;
 };

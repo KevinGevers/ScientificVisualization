@@ -219,6 +219,17 @@ double Simulation::get_rho_min()
     return rho_min;
 }
 
+float Simulation::get_rho_maxf()
+{
+    return static_cast<float>(rho_max);
+}
+
+float Simulation::get_rho_minf()
+{
+    return static_cast<float>(rho_min);
+}
+
+
 float Simulation::get_rhof(int idx)
 {
     return static_cast<float>(rho[idx]);

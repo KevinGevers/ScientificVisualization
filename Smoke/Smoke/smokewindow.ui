@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>599</height>
+    <width>940</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -417,6 +417,9 @@
                   <property name="currentText">
                    <string>Rainbow</string>
                   </property>
+                  <property name="currentIndex">
+                   <number>1</number>
+                  </property>
                   <item>
                    <property name="text">
                     <string>Greyscale</string>
@@ -437,12 +440,18 @@
                 <item>
                  <widget class="QLabel" name="NumberColorsLabel">
                   <property name="text">
-                   <string>Number of Colors</string>
+                   <string>Number of Colours</string>
                   </property>
                  </widget>
                 </item>
                 <item>
                  <widget class="QSlider" name="NumberColors">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="minimum">
                    <number>2</number>
                   </property>
@@ -472,6 +481,12 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="Saturation">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="maximum">
                    <number>1000</number>
                   </property>
@@ -492,6 +507,12 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="Hue">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="maximum">
                    <number>1000</number>
                   </property>
@@ -507,6 +528,16 @@
                  </widget>
                 </item>
                 <item>
+                 <widget class="QCheckBox" name="colorScaling">
+                  <property name="text">
+                   <string>Colour scaling</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QLabel" name="MinClippingLabel">
                   <property name="text">
                    <string>Min Clipping</string>
@@ -515,6 +546,12 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="ClippingMin">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="maximum">
                    <number>1000</number>
                   </property>
@@ -532,6 +569,12 @@
                 </item>
                 <item>
                  <widget class="QSlider" name="ClippingMax">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="maximum">
                    <number>1000</number>
                   </property>
@@ -540,6 +583,12 @@
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="invertedAppearance">
+                   <bool>false</bool>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::NoTicks</enum>
                   </property>
                  </widget>
                 </item>
@@ -585,8 +634,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>764</width>
-     <height>22</height>
+     <width>940</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

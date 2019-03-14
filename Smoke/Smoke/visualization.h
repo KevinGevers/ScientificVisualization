@@ -46,6 +46,10 @@ public:
     void set_shape(int option);
     void set_vector_field(int option);
     void set_color_based_on(int option);
+    void set_scale_colors(int value);
+
+    float get_color_max();
+    float get_color_min();
 public slots:
     void do_one_simulation_step();
 
@@ -81,8 +85,9 @@ private:
     const int COLOR_WHITETORED=3;
     int   scalar_col = 1;           //method for scalar coloring
     int   frozen = 0;               //toggles on/off the animation
+    int   scale_colors = 1;
     float clipping_min = 0;
-    float clipping_max = 1;
+    float clipping_max = 10;
 };
 
 #endif // VISUALIZATION_H

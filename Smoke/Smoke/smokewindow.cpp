@@ -104,12 +104,14 @@ void SmokeWindow::on_smokeColor_currentIndexChanged(const QString &option)
 
 void SmokeWindow::on_ClippingMin_valueChanged(int value)
 {
-    ui->VisualizationWidget->set_clipping_min(value / 1000.0f);
+    // Range between 0 and 10
+    ui->VisualizationWidget->set_clipping_min(value / 100.0f);
 }
 
 void SmokeWindow::on_ClippingMax_valueChanged(int value)
 {
-    ui->VisualizationWidget->set_clipping_max(value / 1000.0f);
+    // Range between 0 and 10
+    ui->VisualizationWidget->set_clipping_max(value / 100.0f);
 }
 
 void SmokeWindow::on_GlyphXSampler_valueChanged(int value)
@@ -150,4 +152,9 @@ void SmokeWindow::on_ColorBasedOn_currentIndexChanged(const QString &option)
         ui->VisualizationWidget->set_color_based_on(2);
     else if (option.compare("Force field magnitude") == 0)
         ui->VisualizationWidget->set_color_based_on(3);
+}
+
+void SmokeWindow::on_colorScaling_stateChanged(int state)
+{
+    ui->VisualizationWidget->set_scale_colors(state/2);
 }

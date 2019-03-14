@@ -4,6 +4,7 @@
 #include "visualization.h"
 #include <QDebug>
 #include <QColor>
+#include <QPainter>
 
 #include <QTimer>
 
@@ -43,8 +44,8 @@ void Visualization::rainbow(float value,float* R,float* G,float* B)
 void Visualization::correctColor(float *R, float *G, float *B)
 {
     QColor color = QColor::fromRgbF(*R, *G, *B);
-    float new_hue = fmod(hue + color.hueF(), 1.0);
-    color.setHsvF(new_hue,saturation,color.valueF());
+    float new_hue = fmod(color.hslHueF() + hue, 1.0);
+    color.setHslF(new_hue,saturation,color.lightnessF());
     *R = color.redF();
     *G = color.greenF();
     *B = color.blueF();
@@ -78,23 +79,33 @@ float normalize(float val, float min, float max)
     return (val - min) / (max - min);
 }
 
+float Visualization::get_color_max()
+{
+    float data_max = simulation->get_rho_maxf();
+    if (scale_colors)
+        return min(data_max, clipping_max);
+    return clipping_max;
+}
+
+float Visualization::get_color_min()
+{
+    float data_min = simulation->get_rho_minf();
+    if (scale_colors)
+        return max(data_min, clipping_min);
+    return clipping_min;
+}
 
 
 //set_colormap: Sets three different types of colormaps
 void Visualization::set_colormap(float vy)
 {
-    double max = simulation->get_rho_max();
-    double min = simulation->get_rho_min();
-
-    vy = normalize(vy, min, max);
-
     if (vy < clipping_min)
         vy = clipping_min;
     else if (vy > clipping_max)
         vy = clipping_max;
 
-    vy = normalize(vy, clipping_min, clipping_max);
-//    qDebug() << vy << max << min;
+    vy = normalize(vy, get_color_min(), get_color_max());
+
     set_scaled_colormap(vy);
 }
 
@@ -204,6 +215,15 @@ void Visualization::paintLegend(float wn, float hn)
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glBegin(GL_TRIANGLES);
 
+    glColor3f(1.0, 1.0, 1.0);
+    glVertex2f(wn-5, voffset - 5);
+    glVertex2f(wn+55, voffset - 5);
+    glVertex2f(wn+55, voffset + hn + 5);
+
+    glVertex2f(wn-5, voffset - 5);
+    glVertex2f(wn-5, voffset + hn + 5);
+    glVertex2f(wn+55, voffset + hn + 5);
+
     for (int i=0; i < res; i++)
     {
         set_scaled_colormap(i / static_cast<float>(res));      glVertex2f(wn+0, voffset + i * (hn/res));
@@ -224,6 +244,12 @@ void Visualization::paintLegend(float wn, float hn)
     glVertex2f(wn + 20, voffset + hn);
     glVertex2f(wn + 0, voffset + hn);
     glEnd();
+
+
+    QPainter painter(this);
+    painter.drawText(wn + 25, voffset + hn, QString::number(get_color_min(), 'f', 2));
+    painter.drawText(wn + 25, voffset + 10, QString::number(get_color_max(), 'f', 2));
+    painter.end();
 }
 
 //visualize: This is the main visualization function
@@ -349,4 +375,10 @@ void Visualization::set_vector_field(int option)
 void Visualization::set_color_based_on(int option)
 {
     colorBasedOn = option;
+}
+
+
+void Visualization::set_scale_colors(int value)
+{
+    scale_colors = value;
 }
