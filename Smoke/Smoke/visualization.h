@@ -65,7 +65,7 @@ protected:
     void draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j);
     void draw_cones(QVector2D data, float wn, float hn, float i, float j);
     void draw_arrows(QVector2D data, float wn, float hn, float i, float j);
-    float interpolate(QVector3D target, QVector3D point1, QVector3D point2, QVector3D point3, QVector3D point4);
+    QVector2D interpolateData(float adj_i, float adj_j);
 private:
     Simulation* simulation;
     float hue = 0.0;
