@@ -167,8 +167,33 @@ void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, flo
     printf("draw_arrows() is not yet implemented!\n");
 }
 
+//QVector2D Visualization::interpolateLineData(float adj_i, float adj_j)
+//{
+//    float dist1, dist2, value1, value2;
+//    if (vectorField) // force field f
+//    {
+//        if ( adj_i - floor(adj_i) == 0)
+//        {
+//            dist1 = adj_j - floor(adj_j);
+//            dist2 = ceil(adj_j) - adj_j;
+//            value1 = simulation->get_fyf((floor(adj_j) * dim) + adj_i);
+//            value2 = simulation->get_fyf((ceil(adj_j) * dim) + adj_i);
+//            return QVector2D(simulation->get_fxf((* dim) + adj_i), dist1*value1 + dist2*value2)
+//        } else if (adj_j - floor(adj_j) == 0)
+//        {
+
+//        }
+//    } else { // fluid velocity v
+
+//    }
+//}
+
+
+
+
 QVector2D Visualization::interpolateData(float adj_i, float adj_j)
 {
+    int dim = simulation->get_dim();
     QVector2D point1, point2, point3, point4, target, point1Data, point2Data, point3Data, point4Data;
     point1 = QVector2D(floor(adj_i), ceil(adj_i)); //Top Left
     point2 = QVector2D(ceil(adj_i), ceil(adj_j)); //Top Right
@@ -176,7 +201,7 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
     point4 = QVector2D(ceil(adj_i), floor(adj_j)); //Bottom Right
     target = QVector2D(adj_i, adj_j); //Target point
 
-    int dim = simulation->get_dim();
+
     if (vectorField) // force field f
     {
         point1Data = QVector2D(simulation->get_fxf((point1.y() * dim) + point1.x()), simulation->get_fyf((point1.y() * dim) + point1.x()));
@@ -196,20 +221,42 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
     yDistTop = point1.y() - target.y();
     xDistBottom = target.x() - point3.x();
     yDistBottom = target.y() - point3.y();
-    float solutionX = 1/ (totalXdist*totalYdist) * (
+    float solutionX = 1.0 / (totalXdist*totalYdist) * (
                 point3Data.x() * xDistTop * yDistTop +
                 point4Data.x() * xDistBottom * yDistTop +
                 point1Data.x() * xDistTop * yDistBottom +
                 point2Data.x() * xDistBottom * yDistBottom
                 );
-    float solutionY = 1/ (totalXdist*totalYdist) * (
+    float solutionY = 1.0 / (totalXdist*totalYdist) * (
                 point3Data.y() * xDistTop * yDistTop +
-                point4Data.x() * xDistBottom * yDistTop +
-                point1Data.x() * xDistTop * yDistBottom +
-                point2Data.x() * xDistBottom * yDistBottom
+                point4Data.y() * xDistBottom * yDistTop +
+                point1Data.y() * xDistTop * yDistBottom +
+                point2Data.y() * xDistBottom * yDistBottom
                 );
+    // solutions are infinite for some reason... example is adj_i = 14.285715 and adj_j = 15.000001
+    //if (solutionX == solutionY) printf("%f and %f both gave %f\n", adj_i, adj_j, solutionX);
     return QVector2D(solutionX, solutionY);
 }
+
+//QVector2D Visualization::calcDatapoint(int i, int j, float adj_i, float adj_j)
+//{
+//    int dim = simulation->get_dim();
+//    if (adj_i == i && adj_j == j)
+//    { // point is on dimension grid
+//        printf("x and y are not adjusted\n");
+//        if (vectorField) // force field f
+//        {
+//            return QVector2D(simulation->get_fxf((j * dim) + i), simulation->get_fyf((j * dim) + i));
+//        } else { // fluid velocity v
+//            return QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
+//        }
+//    } else if (adj_i - floor(adj_i) == 0 || adj_j - floor(adj_j) == 0)
+//    { // point is ether on the x or y dimension grid
+//        return interpolateLineData(adj_i, adj_j);
+//    } else {
+//        return interpolateData(adj_i, adj_j);
+//    }
+//}
 
 void Visualization::paintVectors(float wn, float hn)
 {
@@ -225,6 +272,7 @@ void Visualization::paintVectors(float wn, float hn)
             adj_i = i/(float)glyphXAmount * dim;
             adj_j = j/(float)glyphYAmount * dim;
 
+            //data = calcDatapoint(i, j, adj_i, adj_i);
             if (glyphXAmount != dim || glyphYAmount != dim)
             {
                 //Calculate the correct value for the data point
@@ -237,6 +285,7 @@ void Visualization::paintVectors(float wn, float hn)
                     data = QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
                 }
             }
+
             //The line below has all control over the color of the glyph
             direction_to_color(data.x(), data.y(), color_dir);
 
