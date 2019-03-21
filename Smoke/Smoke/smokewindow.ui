@@ -441,10 +441,10 @@
                 <item>
                  <widget class="QComboBox" name="smokeColor">
                   <property name="currentText">
-                   <string>Rainbow</string>
+                   <string>Greyscale</string>
                   </property>
                   <property name="currentIndex">
-                   <number>1</number>
+                   <number>0</number>
                   </property>
                   <item>
                    <property name="text">

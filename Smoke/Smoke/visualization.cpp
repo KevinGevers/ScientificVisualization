@@ -209,30 +209,6 @@ void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, flo
     printf("draw_arrows() is not yet implemented!\n");
 }
 
-//QVector2D Visualization::interpolateLineData(float adj_i, float adj_j)
-//{
-//    float dist1, dist2, value1, value2;
-//    if (vectorField) // force field f
-//    {
-//        if ( adj_i - floor(adj_i) == 0)
-//        {
-//            dist1 = adj_j - floor(adj_j);
-//            dist2 = ceil(adj_j) - adj_j;
-//            value1 = simulation->get_fyf((floor(adj_j) * dim) + adj_i);
-//            value2 = simulation->get_fyf((ceil(adj_j) * dim) + adj_i);
-//            return QVector2D(simulation->get_fxf((* dim) + adj_i), dist1*value1 + dist2*value2)
-//        } else if (adj_j - floor(adj_j) == 0)
-//        {
-
-//        }
-//    } else { // fluid velocity v
-
-//    }
-//}
-
-
-
-
 QVector2D Visualization::interpolateData(float adj_i, float adj_j)
 {
     int dim = simulation->get_dim();
@@ -279,26 +255,6 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
     //if (solutionX == solutionY) printf("%f and %f both gave %f\n", adj_i, adj_j, solutionX);
     return QVector2D(solutionX, solutionY);
 }
-
-//QVector2D Visualization::calcDatapoint(int i, int j, float adj_i, float adj_j)
-//{
-//    int dim = simulation->get_dim();
-//    if (adj_i == i && adj_j == j)
-//    { // point is on dimension grid
-//        printf("x and y are not adjusted\n");
-//        if (vectorField) // force field f
-//        {
-//            return QVector2D(simulation->get_fxf((j * dim) + i), simulation->get_fyf((j * dim) + i));
-//        } else { // fluid velocity v
-//            return QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
-//        }
-//    } else if (adj_i - floor(adj_i) == 0 || adj_j - floor(adj_j) == 0)
-//    { // point is ether on the x or y dimension grid
-//        return interpolateLineData(adj_i, adj_j);
-//    } else {
-//        return interpolateData(adj_i, adj_j);
-//    }
-//}
 
 void Visualization::paintVectors(float wn, float hn)
 {
@@ -370,6 +326,40 @@ void Visualization::paintVectors(float wn, float hn)
 //        glEnd();
 //}
 
+float Visualization:: get_scalar(int idx){
+    switch (smokeMode)
+    {
+        case 0: // density
+            return simulation->get_rhof(idx);
+        case 1: // divergence based on velocity
+            return simulation->get_rhof(idx);
+//        case 2: // divergence based on force
+//            return
+    }
+
+//        case 0: return simulation.get_rho()[i];
+//        //velocity
+//        case 1: {
+//            fftw_real* vx = simulation.get_vx();
+//            fftw_real* vy = simulation.get_vy();
+//            return simulation.get_length(vx[i], vy[i]);
+//        };
+//        //force
+//        case 2: {
+//            fftw_real* fx = simulation.get_fx();
+//            fftw_real* fy = simulation.get_fy();
+//            return simulation.get_length(fx[i], fy[i]);
+//        };
+
+//        //divergence
+//        case 3: {
+//            float div = clamp(simulation.get_divergence()[i], -1.0,1.0);
+//            return (div+1.0)*0.5;
+//        }
+//    }
+}
+
+
 void Visualization::paintSmoke(float wn, float hn)
 {
     int idx0, idx1, idx2, idx3;
@@ -400,14 +390,14 @@ void Visualization::paintSmoke(float wn, float hn)
             py3 = hn + j * hn;
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
-            set_colormap(simulation->get_rhof(idx0));    glVertex2f(px0, py0);
-            set_colormap(simulation->get_rhof(idx1));    glVertex2f(px1, py1);
-            set_colormap(simulation->get_rhof(idx2));    glVertex2f(px2, py2);
+            set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
+            set_colormap(get_scalar(idx1));    glVertex2f(px1, py1);
+            set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
 
-
-            set_colormap(simulation->get_rhof(idx0));    glVertex2f(px0, py0);
-            set_colormap(simulation->get_rhof(idx2));    glVertex2f(px2, py2);
-            set_colormap(simulation->get_rhof(idx3));    glVertex2f(px3, py3);
+//set_colormap(get_scalar(idx0));    glVertex3f(px0-1, py0-1,get_scalar_height(idx0));
+            set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
+            set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
+            set_colormap(get_scalar(idx3));    glVertex2f(px3, py3);
         }
     }
     glEnd();

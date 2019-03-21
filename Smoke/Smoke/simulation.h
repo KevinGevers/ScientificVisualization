@@ -46,6 +46,7 @@ public:
     float get_fxf(int idx);
     float get_fyf(int idx);
 
+
 private:
     int dim;
 

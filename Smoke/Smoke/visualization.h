@@ -47,6 +47,8 @@ public:
     void set_vector_field(int option);
     void set_color_based_on(int option);
     void set_scale_colors(int value);
+    void set_smoke_mode(int mode);
+
 
     float get_color_max();
     float get_color_min();
@@ -67,6 +69,8 @@ protected:
     void draw_arrows(QVector2D data, float wn, float hn, float i, float j);
     QVector2D interpolateData(float adj_i, float adj_j);
     //QVector2D calcDatapoint(int i, int j, float adj_i, float adj_j);
+    float get_scalar(int idx);
+
 private:
     Simulation* simulation;
     float hue = 0.0;
@@ -89,7 +93,7 @@ private:
     const int COLOR_RAINBOW=1;
     const int COLOR_BANDS=2;
     const int COLOR_WHITETORED=3;
-    int   scalar_col = 1;           //method for scalar coloring
+    int   scalar_col = 0;           //method for scalar coloring
     int   frozen = 0;               //toggles on/off the animation
     int   scale_colors = 1;
     float clipping_min = 0;
