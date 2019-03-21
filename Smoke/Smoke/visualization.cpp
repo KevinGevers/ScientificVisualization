@@ -5,6 +5,8 @@
 #include <QDebug>
 #include <QColor>
 #include <QPainter>
+#include <QVector3D>
+#include <QVector2D>
 
 #include <QTimer>
 #include <QVector3D>
@@ -207,32 +209,166 @@ void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, flo
     printf("draw_arrows() is not yet implemented!\n");
 }
 
+//QVector2D Visualization::interpolateLineData(float adj_i, float adj_j)
+//{
+//    float dist1, dist2, value1, value2;
+//    if (vectorField) // force field f
+//    {
+//        if ( adj_i - floor(adj_i) == 0)
+//        {
+//            dist1 = adj_j - floor(adj_j);
+//            dist2 = ceil(adj_j) - adj_j;
+//            value1 = simulation->get_fyf((floor(adj_j) * dim) + adj_i);
+//            value2 = simulation->get_fyf((ceil(adj_j) * dim) + adj_i);
+//            return QVector2D(simulation->get_fxf((* dim) + adj_i), dist1*value1 + dist2*value2)
+//        } else if (adj_j - floor(adj_j) == 0)
+//        {
+
+//        }
+//    } else { // fluid velocity v
+
+//    }
+//}
+
+
+
+
+QVector2D Visualization::interpolateData(float adj_i, float adj_j)
+{
+    int dim = simulation->get_dim();
+    QVector2D point1, point2, point3, point4, target, point1Data, point2Data, point3Data, point4Data;
+    point1 = QVector2D(floor(adj_i), ceil(adj_i)); //Top Left
+    point2 = QVector2D(ceil(adj_i), ceil(adj_j)); //Top Right
+    point3 = QVector2D(floor(adj_i), floor(adj_j)); //Bottom Left
+    point4 = QVector2D(ceil(adj_i), floor(adj_j)); //Bottom Right
+    target = QVector2D(adj_i, adj_j); //Target point
+
+
+    if (vectorField) // force field f
+    {
+        point1Data = QVector2D(simulation->get_fxf((point1.y() * dim) + point1.x()), simulation->get_fyf((point1.y() * dim) + point1.x()));
+        point2Data = QVector2D(simulation->get_fxf((point2.y() * dim) + point2.x()), simulation->get_fyf((point2.y() * dim) + point2.x()));
+        point3Data = QVector2D(simulation->get_fxf((point3.y() * dim) + point3.x()), simulation->get_fyf((point3.y() * dim) + point3.x()));
+        point4Data = QVector2D(simulation->get_fxf((point4.y() * dim) + point4.x()), simulation->get_fyf((point4.y() * dim) + point4.x()));
+    } else { // fluid velocity v
+        point1Data = QVector2D(simulation->get_vxf((point1.y() * dim) + point1.x()), simulation->get_vyf((point1.y() * dim) + point1.x()));
+        point2Data = QVector2D(simulation->get_vxf((point2.y() * dim) + point2.x()), simulation->get_vyf((point2.y() * dim) + point2.x()));
+        point3Data = QVector2D(simulation->get_vxf((point3.y() * dim) + point3.x()), simulation->get_vyf((point3.y() * dim) + point3.x()));
+        point4Data = QVector2D(simulation->get_vxf((point4.y() * dim) + point4.x()), simulation->get_vyf((point4.y() * dim) + point4.x()));
+    }
+    float totalXdist, totalYdist, xDistTop, yDistTop, xDistBottom, yDistBottom;
+    totalXdist = point2.x() - point1.x();
+    totalYdist = point1.y() - point3.y();
+    xDistTop = point2.x() - target.x();
+    yDistTop = point1.y() - target.y();
+    xDistBottom = target.x() - point3.x();
+    yDistBottom = target.y() - point3.y();
+    float solutionX = 1.0 / (totalXdist*totalYdist) * (
+                point3Data.x() * xDistTop * yDistTop +
+                point4Data.x() * xDistBottom * yDistTop +
+                point1Data.x() * xDistTop * yDistBottom +
+                point2Data.x() * xDistBottom * yDistBottom
+                );
+    float solutionY = 1.0 / (totalXdist*totalYdist) * (
+                point3Data.y() * xDistTop * yDistTop +
+                point4Data.y() * xDistBottom * yDistTop +
+                point1Data.y() * xDistTop * yDistBottom +
+                point2Data.y() * xDistBottom * yDistBottom
+                );
+    // solutions are infinite for some reason... example is adj_i = 14.285715 and adj_j = 15.000001
+    //if (solutionX == solutionY) printf("%f and %f both gave %f\n", adj_i, adj_j, solutionX);
+    return QVector2D(solutionX, solutionY);
+}
+
+//QVector2D Visualization::calcDatapoint(int i, int j, float adj_i, float adj_j)
+//{
+//    int dim = simulation->get_dim();
+//    if (adj_i == i && adj_j == j)
+//    { // point is on dimension grid
+//        printf("x and y are not adjusted\n");
+//        if (vectorField) // force field f
+//        {
+//            return QVector2D(simulation->get_fxf((j * dim) + i), simulation->get_fyf((j * dim) + i));
+//        } else { // fluid velocity v
+//            return QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
+//        }
+//    } else if (adj_i - floor(adj_i) == 0 || adj_j - floor(adj_j) == 0)
+//    { // point is ether on the x or y dimension grid
+//        return interpolateLineData(adj_i, adj_j);
+//    } else {
+//        return interpolateData(adj_i, adj_j);
+//    }
+//}
 
 void Visualization::paintVectors(float wn, float hn)
 {
-    int idx;
-    QVector2D vector;
+    float adj_i, adj_j;
+    QVector2D data;
+    glBegin(GL_LINES);
+    int dim = simulation->get_dim();
     // This draws a glyph for every raster point in the set dimension (standard is 50)
     // We will need to alter this so it's adjustable
-    for (int i = 0; i < simulation->get_dim(); i++) {
-        for (int j = 0; j < simulation->get_dim(); j++) {
-            idx = (j * simulation->get_dim()) + i;
-            if (vectorField) // force field f
-                vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
-            else // fluid velocity v
-                vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
+    for (int i = 0; i < glyphXAmount; i++)
+    {
+        for (int j = 0; j < glyphYAmount; j++)
+        {
+            adj_i = i/(float)glyphXAmount * dim;
+            adj_j = j/(float)glyphYAmount * dim;
+
+            //data = calcDatapoint(i, j, adj_i, adj_i);
+            if (glyphXAmount != dim || glyphYAmount != dim)
+            {
+                //Calculate the correct value for the data point
+                data = interpolateData(adj_i, adj_j);
+            } else {
+                if (vectorField) // force field f
+                {
+                    data = QVector2D(simulation->get_fxf((j * dim) + i), simulation->get_fyf((j * dim) + i));
+                } else { // fluid velocity v
+                    data = QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
+                }
+            }
 
             //The line below has all control over the color of the glyph
-            direction_to_color(vector.x(), vector.y(), color_dir);
+            direction_to_color(data.x(), data.y(), color_dir);
 
             switch(shape) {
-                case 0: draw_hedgehogs(vector, wn, hn, i, j); break;
-                case 1: draw_cones(vector, wn, hn, i, j); break;
-                case 2: draw_arrows(vector, wn, hn, i, j); break;
+                case 0: draw_hedgehogs(data, wn, hn, adj_i, adj_j); break;
+                case 1: draw_cones(data, wn, hn, adj_i, adj_j); break;
+                case 2: draw_arrows(data, wn, hn, adj_i, adj_j); break;
             }
         }
     }
 }
+
+
+//void Visualization::paintVectors(float wn, float hn)
+//{
+//    int idx;
+//    QVector2D vector;
+//    glBegin(GL_LINES);
+//    // This draws a glyph for every raster point in the set dimension (standard is 50)
+//    // We will need to alter this so it's adjustable
+//    for (int i = 0; i < simulation->get_dim(); i++)
+//        for (int j = 0; j < simulation->get_dim(); j++)
+//        {
+//            idx = (j * simulation->get_dim()) + i;
+//            if (vectorField) // force field f
+//                vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
+//            else // fluid velocity v
+//                vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
+
+//            //The line below has all control over the color of the glyph
+//            direction_to_color(vector.x(), vector.y(), color_dir);
+
+//            switch(shape) {
+//                case 0: draw_hedgehogs(vector, wn, hn, i, j); break;
+//                case 1: draw_cones(vector, wn, hn, i, j); break;
+//                case 2: draw_arrows(vector, wn, hn, i, j); break;
+//            }
+//        }
+//        glEnd();
+//}
 
 void Visualization::paintSmoke(float wn, float hn)
 {
@@ -464,6 +600,7 @@ int Visualization::toggle_frozen()
 void Visualization::set_glyph_x_amount(int value)
 {
     glyphXAmount = value;
+    printf("Changed the amount of glyphs on x scale to %d\n", value);
 }
 
 void Visualization::set_glyph_y_amount(int value)
