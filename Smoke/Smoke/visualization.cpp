@@ -9,6 +9,8 @@
 #include <QVector2D>
 
 #include <QTimer>
+#include <QVector3D>
+#include <QQuaternion>
 
 using namespace std;
 
@@ -145,6 +147,7 @@ void Visualization::direction_to_color(float x, float y, int method)
 
 void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j)
 {
+    glBegin(GL_LINES);
     float x1 = wn + i * wn;
     float y1 = hn + j * hn;
     float x2 = (wn + i * wn) + vec_scale * data.x();
@@ -153,12 +156,51 @@ void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, 
     glVertex2f(x1,y1);
     //The line below has all control over the placement of the glyphs
     glVertex2f(x2,y2);
+    glEnd();
+}
+
+void draw_cone(QVector3D p1, QVector3D p2, float r, int n)
+{
+    glEnable(GL_DEPTH_TEST);
+    QVector3D d = p2-p1;
+    d.normalize();
+
+    QQuaternion rotation = QQuaternion::fromDirection(d, QVector3D(0,0,1));
+
+    QVector<QVector3D> points;
+    // calculate cone bottom circl
+    float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
+    for (int i = 0; i < n; i++) {
+        QVector3D point = QVector3D(r * cos(t * i), -r * sin(t*i), 0);
+        point = rotation * point;
+        point += p1;
+        points.push_back(point);
+    }
+
+    // draw cone (bottomless)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (int i = 1; i <= n; ++i) {
+        QVector3D norm = QVector3D::crossProduct(points[i%n] - p2, points[i-1] - points[i%n]);
+        norm.normalize();
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p2.x(), p2.y(), p2.z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(points[i%n].x(), points[i%n].y(), points[i%n].z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(points[i-1].x(), points[i-1].y(), points[i-1].z());
+    }
+    glEnd();
+
+    glDisable(GL_DEPTH_TEST);
+    glNormal3f(0, 0, 1);
 }
 
 void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, float j)
 {
-    //TODO: implement the function
-    printf("draw_cones() is not yet implemented!\n");
+    QVector3D p1 = QVector3D(wn + i * wn, hn + j * hn, 0);
+    QVector3D p2 = QVector3D((wn + i * wn) + vec_scale * data.x(), (hn + j * hn) + vec_scale * data.y(), 0);
+    draw_cone(p1, p2, p1.distanceToPoint(p2) / 3.0f, 10);
 }
 
 void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, float j)
@@ -267,6 +309,7 @@ void Visualization::paintVectors(float wn, float hn)
     // This draws a glyph for every raster point in the set dimension (standard is 50)
     // We will need to alter this so it's adjustable
     for (int i = 0; i < glyphXAmount; i++)
+    {
         for (int j = 0; j < glyphYAmount; j++)
         {
             adj_i = i/(float)glyphXAmount * dim;
@@ -295,7 +338,7 @@ void Visualization::paintVectors(float wn, float hn)
                 case 2: draw_arrows(data, wn, hn, adj_i, adj_j); break;
             }
         }
-        glEnd();
+    }
 }
 
 
@@ -443,7 +486,45 @@ void Visualization::paintGL()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -1, 1);
+    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -20, 20);
+
+
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glMatrixMode(GL_MODELVIEW);
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+//    float light[4] = {0,0,0,-1};
+//    glLightfv(GL_LIGHT0, GL_AMBIENT, light);
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
+
+
+//    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+//    GLfloat mat_shininess[] = { 100.0 };
+//    GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+//    GLfloat mat_diffuse_back[] = { 0.0, 0.0, 1.0, 1.0 };
+//    GLfloat light_position[] = { 0.0, 0.0, 1.0, 0.0 };
+//    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+//    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+//    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+//    glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+
+//    glEnable(GL_LIGHTING);
+//    glEnable(GL_LIGHT0);
+//    /*glPixelStorei(GL_PACK_ROW_LENGTH, 0);
+//    glPixelStorei(GL_PACK_ALIGNMENT, 1);*/
+//    glEnable(GL_NORMALIZE);
+//    glEnable(GL_POINT_SMOOTH);
+//    glShadeModel (GL_SMOOTH);
+//    glEnable(GL_DEPTH_TEST);
+//    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+//    glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT_AND_DIFFUSE , mat_diffuse );
+//    glDepthMask(GL_TRUE);
+
+
     visualize();
     glFlush();
 }
