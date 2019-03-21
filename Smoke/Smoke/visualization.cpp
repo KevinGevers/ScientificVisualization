@@ -153,9 +153,8 @@ void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, 
     float y1 = hn + j * hn;
     float x2 = (wn + i * wn) + vec_scale * data.x();
     float y2 = (hn + j * hn) + vec_scale * data.y();
-    //The line below has all control over the moving of the glyphs
+
     glVertex2f(x1,y1);
-    //The line below has all control over the placement of the glyphs
     glVertex2f(x2,y2);
     glEnd();
 }
@@ -284,7 +283,7 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
     if (idx_j1 == idx_j2)
         idx_j2++;
 
-    point1 = QVector2D(idx_i1, idx_i2); //Top Left
+    point1 = QVector2D(idx_i1, idx_j2); //Top Left
     point2 = QVector2D(idx_i2, idx_j2); //Top Right
     point3 = QVector2D(idx_i1, idx_j1); //Bottom Left
     point4 = QVector2D(idx_i2, idx_j1); //Bottom Right
@@ -303,27 +302,23 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
         point3Data = QVector2D(simulation->get_vxf((point3.y() * dim) + point3.x()), simulation->get_vyf((point3.y() * dim) + point3.x()));
         point4Data = QVector2D(simulation->get_vxf((point4.y() * dim) + point4.x()), simulation->get_vyf((point4.y() * dim) + point4.x()));
     }
-    float totalXdist, totalYdist, xDistTop, yDistTop, xDistBottom, yDistBottom;
-    totalXdist = point2.x() - point1.x();
-    totalYdist = point1.y() - point3.y();
+    float xDistTop, yDistTop, xDistBottom, yDistBottom;
     xDistTop = point2.x() - target.x();
     yDistTop = point1.y() - target.y();
     xDistBottom = target.x() - point3.x();
     yDistBottom = target.y() - point3.y();
-    float solutionX = 1.0f / (totalXdist*totalYdist) * (
+    float solutionX = (
                 point3Data.x() * xDistTop * yDistTop +
                 point4Data.x() * xDistBottom * yDistTop +
                 point1Data.x() * xDistTop * yDistBottom +
                 point2Data.x() * xDistBottom * yDistBottom
                 );
-    float solutionY = 1.0f / (totalXdist*totalYdist) * (
+    float solutionY = (
                 point3Data.y() * xDistTop * yDistTop +
                 point4Data.y() * xDistBottom * yDistTop +
                 point1Data.y() * xDistTop * yDistBottom +
                 point2Data.y() * xDistBottom * yDistBottom
                 );
-    // solutions are infinite for some reason... example is adj_i = 14.285715 and adj_j = 15.000001
-    //if (solutionX == solutionY) printf("%f and %f both gave %f\n", adj_i, adj_j, solutionX);
     return QVector2D(solutionX, solutionY);
 }
 
@@ -342,21 +337,7 @@ void Visualization::paintVectors(float wn, float hn)
             adj_i = i/(float)glyphXAmount * dim;
             adj_j = j/(float)glyphYAmount * dim;
 
-            //data = calcDatapoint(i, j, adj_i, adj_i);
-            if (glyphXAmount != dim || glyphYAmount != dim)
-            {
-                //Calculate the correct value for the data point
-                data = interpolateData(adj_i, adj_j);
-            } else {
-                if (vectorField) // force field f
-                {
-                    data = QVector2D(simulation->get_fxf((j * dim) + i), simulation->get_fyf((j * dim) + i));
-                } else { // fluid velocity v
-                    data = QVector2D(simulation->get_vxf((j * dim) + i), simulation->get_vyf((j * dim) + i));
-                }
-            }
-
-            //The line below has all control over the color of the glyph
+            data = interpolateData(adj_i, adj_j);
             direction_to_color(data.x(), data.y(), color_dir);
 
             switch(shape) {
@@ -367,35 +348,6 @@ void Visualization::paintVectors(float wn, float hn)
         }
     }
 }
-
-
-//void Visualization::paintVectors(float wn, float hn)
-//{
-//    int idx;
-//    QVector2D vector;
-//    glBegin(GL_LINES);
-//    // This draws a glyph for every raster point in the set dimension (standard is 50)
-//    // We will need to alter this so it's adjustable
-//    for (int i = 0; i < simulation->get_dim(); i++)
-//        for (int j = 0; j < simulation->get_dim(); j++)
-//        {
-//            idx = (j * simulation->get_dim()) + i;
-//            if (vectorField) // force field f
-//                vector = QVector2D(simulation->get_fxf(idx), simulation->get_fyf(idx));
-//            else // fluid velocity v
-//                vector = QVector2D(simulation->get_vxf(idx), simulation->get_vyf(idx));
-
-//            //The line below has all control over the color of the glyph
-//            direction_to_color(vector.x(), vector.y(), color_dir);
-
-//            switch(shape) {
-//                case 0: draw_hedgehogs(vector, wn, hn, i, j); break;
-//                case 1: draw_cones(vector, wn, hn, i, j); break;
-//                case 2: draw_arrows(vector, wn, hn, i, j); break;
-//            }
-//        }
-//        glEnd();
-//}
 
 float Visualization:: get_scalar(int idx){
     switch (smokeMode)
@@ -549,42 +501,13 @@ void Visualization::paintGL()
     glLoadIdentity();
     glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
 
-
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-//    float light[4] = {0,0,0,-1};
-//    glLightfv(GL_LIGHT0, GL_AMBIENT, light);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
-
-
-//    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-//    GLfloat mat_shininess[] = { 100.0 };
-//    GLfloat mat_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-//    GLfloat mat_diffuse_back[] = { 0.0, 0.0, 1.0, 1.0 };
-//    GLfloat light_position[] = { 0.0, 0.0, 1.0, 0.0 };
-//    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
-//    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
-//    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-//    glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
-
-//    glEnable(GL_LIGHTING);
-//    glEnable(GL_LIGHT0);
-//    /*glPixelStorei(GL_PACK_ROW_LENGTH, 0);
-//    glPixelStorei(GL_PACK_ALIGNMENT, 1);*/
-//    glEnable(GL_NORMALIZE);
-//    glEnable(GL_POINT_SMOOTH);
-//    glShadeModel (GL_SMOOTH);
-//    glEnable(GL_DEPTH_TEST);
-//    glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-//    glMaterialfv ( GL_FRONT_AND_BACK , GL_AMBIENT_AND_DIFFUSE , mat_diffuse );
-//    glDepthMask(GL_TRUE);
-
 
     visualize();
     glFlush();
