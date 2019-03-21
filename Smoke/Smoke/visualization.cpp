@@ -699,3 +699,8 @@ void Visualization::set_scale_colors(int value)
 {
     scale_colors = value;
 }
+
+void Visualization::set_smoke_mode(int mode)
+{
+    smokeMode = mode;
+}
