@@ -132,6 +132,8 @@ void SmokeWindow::on_Shape_currentIndexChanged(const QString &option)
         ui->VisualizationWidget->set_shape(1);
     else if (option.compare("Arrows") == 0)
         ui->VisualizationWidget->set_shape(2);
+    else if (option.compare("Circles") == 0)
+        ui->VisualizationWidget->set_shape(3);
 }
 
 void SmokeWindow::on_VectorField_currentIndexChanged(const QString &option)
@@ -167,4 +169,9 @@ void SmokeWindow::on_SmokeMode_currentIndexChanged(const QString &mode)
         ui->VisualizationWidget->set_smoke_mode(1);
     else if (mode.compare("Divergence on Force") == 0)
         ui->VisualizationWidget->set_smoke_mode(2);
+}
+
+void SmokeWindow::on_jitterVectors_stateChanged(int state)
+{
+    ui->VisualizationWidget->set_vector_jitter(state/2);
 }

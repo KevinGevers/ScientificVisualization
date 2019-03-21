@@ -29,6 +29,7 @@ public:
     void set_draw_vectors(int state);
     void set_vector_colors(int state);
     void set_vector_scale(int scale);
+    void set_vector_jitter(int state);
     void set_draw_smoke(int state);
     void set_smoke_colors(int mode);
     int toggle_frozen();
@@ -64,9 +65,10 @@ protected:
     void paintSmoke(float wn, float hn);
     void paintVectors(float wn, float hn);
     void paintLegend(float wn, float hn);
-    void draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j);
-    void draw_cones(QVector2D data, float wn, float hn, float i, float j);
     void draw_arrows(QVector2D data, float wn, float hn, float i, float j);
+    void draw_circles(QVector2D data, float wn, float hn, float i, float j);
+    void draw_cones(QVector2D data, float wn, float hn, float i, float j);
+    void draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j);
     QVector2D interpolateData(float adj_i, float adj_j);
     //QVector2D calcDatapoint(int i, int j, float adj_i, float adj_j);
     float get_scalar(int idx);
@@ -82,10 +84,12 @@ private:
     int vectorField = 0;
     int colorBasedOn = 0;
     int smokeMode = 0;
+    int jitter_seed = 0;
 
     //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
     int   color_dir = 0;            //use direction color-coding or not
     float vec_scale = 1000;			//scaling of hedgehogs
+    int   vec_jitter = 0;
     int   draw_smoke = 1;           //draw the smoke or not
     int   draw_vecs = 0;            //draw the vector field or not
     int   draw_scale = 1;

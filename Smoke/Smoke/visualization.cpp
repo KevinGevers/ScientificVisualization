@@ -160,6 +160,16 @@ void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, 
     glEnd();
 }
 
+void draw_circle(QVector2D p1, float rx, float ry, int n)
+{
+    float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
+    glBegin(GL_LINE_LOOP);
+    for (int i = 0; i < n; i++) {
+        QVector2D point = p1 + QVector2D(rx * cos(t * i), -ry * sin(t*i));
+        glVertex2f(point.x(),point.y());
+    }
+    glEnd();
+}
 
 void draw_cone(QVector3D p1, QVector3D p2, float r, int n)
 {
@@ -253,6 +263,14 @@ void draw_arrow(QVector3D point_1, QVector3D point_2)
     draw_cylinder(point_1, point_1 + (point_2 - point_1) / 3, size/6.0f, 10);
 }
 
+
+void Visualization::draw_circles(QVector2D data, float wn, float hn, float i, float j)
+{
+    QVector2D p1 = QVector2D(wn + i * wn, hn + j * hn);
+    draw_circle(p1, vec_scale * data.x(), vec_scale * data.y(), 10);
+}
+
+
 void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, float j)
 {
     QVector3D p1 = QVector3D(wn + i * wn, hn + j * hn, 0);
@@ -333,6 +351,7 @@ void Visualization::paintVectors(float wn, float hn)
     QVector2D data;
     glBegin(GL_LINES);
     int dim = simulation->get_dim();
+    srand(jitter_seed);
     // This draws a glyph for every raster point in the set dimension (standard is 50)
     // We will need to alter this so it's adjustable
     for (int i = 0; i < glyphXAmount; i++)
@@ -341,6 +360,11 @@ void Visualization::paintVectors(float wn, float hn)
         {
             adj_i = i/(float)glyphXAmount * dim;
             adj_j = j/(float)glyphYAmount * dim;
+
+            if (vec_jitter) {
+                adj_i += ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) - .5f) * dim / static_cast <float> (glyphXAmount);
+                adj_j += ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) - .5f) * dim / static_cast <float> (glyphYAmount);
+            }
 
             //data = calcDatapoint(i, j, adj_i, adj_i);
             if (glyphXAmount != dim || glyphYAmount != dim)
@@ -363,6 +387,7 @@ void Visualization::paintVectors(float wn, float hn)
                 case 0: draw_hedgehogs(data, wn, hn, adj_i, adj_j); break;
                 case 1: draw_cones(data, wn, hn, adj_i, adj_j); break;
                 case 2: draw_arrows(data, wn, hn, adj_i, adj_j); break;
+                case 3: draw_circles(data, wn, hn, adj_i, adj_j); break;
             }
         }
     }
@@ -605,6 +630,7 @@ Simulation *Visualization::get_simulation()
 void Visualization::set_draw_vectors(int state)
 {
     draw_vecs = state;
+    jitter_seed = rand();
 }
 
 void Visualization::set_vector_colors(int state)
@@ -615,6 +641,12 @@ void Visualization::set_vector_colors(int state)
 void Visualization::set_vector_scale(int scale)
 {
     vec_scale = scale;
+}
+
+void Visualization::set_vector_jitter(int state)
+{
+    vec_jitter = state;
+    jitter_seed = rand();
 }
 
 void Visualization::set_draw_smoke(int state)
@@ -661,12 +693,13 @@ int Visualization::toggle_frozen()
 void Visualization::set_glyph_x_amount(int value)
 {
     glyphXAmount = value;
-    printf("Changed the amount of glyphs on x scale to %d\n", value);
+    jitter_seed = rand();
 }
 
 void Visualization::set_glyph_y_amount(int value)
 {
     glyphYAmount = value;
+    jitter_seed = rand();
 }
 
 void Visualization::set_shape(int option)

@@ -60,6 +60,8 @@ private slots:
 
     void on_SmokeMode_currentIndexChanged(const QString &arg1);
 
+    void on_jitterVectors_stateChanged(int arg1);
+
 private:
     Ui::SmokeWindow *ui;
 };
