@@ -158,3 +158,13 @@ void SmokeWindow::on_colorScaling_stateChanged(int state)
 {
     ui->VisualizationWidget->set_scale_colors(state/2);
 }
+
+void SmokeWindow::on_SmokeMode_currentIndexChanged(const QString &mode)
+{
+    if (mode.compare("Density") == 0)
+        ui->VisualizationWidget->set_smoke_mode(0);
+    else if (mode.compare("Divergence on Velocity") == 0)
+        ui->VisualizationWidget->set_smoke_mode(1);
+    else if (mode.compare("Divergence on Force") == 0)
+        ui->VisualizationWidget->set_smoke_mode(2);
+}

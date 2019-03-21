@@ -14,6 +14,7 @@ public:
     void solve(int n, double* vx, double* vy, double* vx0, double* vy0, double visc, double dt);
     void diffuse_matter(int n, double *vx, double *vy, double *rho, double *rho0, double dt);
     void set_forces(void);
+    void calc_divergence(int vectorField);
     void do_one_simulation_step(void);
     void drag(int mx, int my, int winWidth, int winHeight);
 
@@ -23,7 +24,9 @@ public:
     float get_rhof(int idx);
 
     double get_vx(int idx);
+    double *get_vx();
     double get_vy(int idx);
+    double *get_vy();
     float get_vxf(int idx);
     float get_vyf(int idx);
 
@@ -36,8 +39,13 @@ public:
     float get_rho_maxf();
     float get_rho_minf();
 
+    double get_fx(int idx);
+    double *get_fx();
+    double get_fy(int idx);
+    double *get_fy();
     float get_fxf(int idx);
     float get_fyf(int idx);
+
 private:
     int dim;
 

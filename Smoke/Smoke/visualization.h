@@ -77,6 +77,7 @@ private:
     int shape = 0;
     int vectorField = 0;
     int colorBasedOn = 0;
+    int smokeMode = 0;
 
     //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
     int   color_dir = 0;            //use direction color-coding or not

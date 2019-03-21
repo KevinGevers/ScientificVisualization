@@ -10,6 +10,8 @@ Simulation::Simulation(int n)
     init_simulation(n);
 }
 
+//float Simulation::get_length(float x, float y) {return sqrt(x*x + y*y);}
+
 //init_simulation: Initialize simulation data structures as a function of the grid size 'n'.
 //                 Although the simulation takes place on a 2D grid, we allocate all data structures as 1D arrays,
 //                 for compatibility with the FFTW numerical library.
@@ -160,7 +162,62 @@ void Simulation::set_forces(void)
         vy0[i]    = fy[i];
     }
 }
+//// emilio's code, remove before submitting!
+//void Simulation::calc_divergence(int vector_data_set, int DIM){
 
+//        fftw_real* datax;
+//        fftw_real* datay;
+//        switch(vector_data_set){
+//        case 0:
+//            datax = this->get_vx();
+//            datay = this->get_vy();
+//        break;
+//        case 1:
+//            datax = this->get_fx();
+//            datay = this->get_fy();
+//        break;
+//        }
+
+
+//        float  wn = 2.0 / DIM;   // Grid cell width
+//        float  hn = 2.0 / DIM;  // Grid cell height
+
+//        int i;
+//        for (i = 0; i < DIM * DIM; i++)
+//        {
+//            float upper = this->get_length(datax[i-DIM], datay[i-DIM]);
+//            float below = this->get_length(datax[i+DIM], datay[i+DIM]);
+//            float left =  this->get_length(datax[i-1], datay[i-1]);
+//            float right = this->get_length(datax[i+1], datay[i+1]);
+
+//            float diff_x = ((left-right)/wn);
+//            float diff_y = ((upper-below)/hn);
+
+//            float result_d = (diff_x + diff_y);
+//            if (result_d > max_divergence)
+//                max_divergence = result_d;
+//            if (result_d < min_divergence)
+//                min_divergence = result_d;
+
+//            divergence[i] =result_d;
+//       }
+//}
+
+
+
+void Simulation::calc_divergence(int vectorField)
+{
+    double *dataX, *dataY;
+    if (vectorField)
+    {
+        dataX = this->get_fx();
+        dataY = this->get_fy();
+    } else {
+        dataX = this->get_vx();
+        dataY = this->get_vy();
+    }
+
+}
 
 //do_one_simulation_step: Do one complete cycle of the simulation:
 //      - set_forces:
@@ -235,14 +292,46 @@ float Simulation::get_rhof(int idx)
     return static_cast<float>(rho[idx]);
 }
 
+double Simulation::get_fx(int idx)
+{
+    return fx[idx];
+}
+
+double* Simulation::get_fx()
+{
+    return fx;
+}
+
+double Simulation::get_fy(int idx)
+{
+    return fy[idx];
+}
+
+double* Simulation::get_fy()
+{
+    return fy;
+}
+
+
+
 double Simulation::get_vx(int idx)
 {
     return vx[idx];
 }
 
+double* Simulation::get_vx()
+{
+    return vx;
+}
+
 double Simulation::get_vy(int idx)
 {
     return vy[idx];
+}
+
+double* Simulation::get_vy()
+{
+    return vy;
 }
 
 float Simulation::get_vxf(int idx)
