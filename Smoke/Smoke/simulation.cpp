@@ -205,19 +205,20 @@ void Simulation::set_forces(void)
 
 
 
-void Simulation::calc_divergence(int vectorField)
+void Simulation::calc_divergence(int mode)
 {
     double *dataX, *dataY;
-    if (vectorField)
+    if (mode)
     {
-        dataX = this->get_fx();
-        dataY = this->get_fy();
-    } else {
         dataX = this->get_vx();
         dataY = this->get_vy();
+    } else {
+        dataX = this->get_fx();
+        dataY = this->get_fy();
     }
 
 }
+
 
 //do_one_simulation_step: Do one complete cycle of the simulation:
 //      - set_forces:
@@ -362,4 +363,9 @@ void Simulation::set_viscosity(float viscosity)
 void Simulation::set_dt(double new_dt)
 {
     dt = new_dt;
+}
+
+float Simulation::get_divergence(int idx)
+{
+    return divergence[idx];
 }
