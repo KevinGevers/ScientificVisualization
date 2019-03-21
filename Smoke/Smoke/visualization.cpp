@@ -28,6 +28,7 @@ void Visualization::do_one_simulation_step()
 {
     if(!frozen){
         simulation->do_one_simulation_step();
+        if (smokeMode) simulation->calc_divergence(smokeMode);
         update();
     }
 }
@@ -354,32 +355,17 @@ float Visualization:: get_scalar(int idx){
     {
         case 0: // density
             return simulation->get_rhof(idx);
-        case 1: // divergence based on velocity
-            return simulation->get_rhof(idx);
-//        case 2: // divergence based on force
-//            return
+        case 1: // divergence
+            return simulation->get_divergence(idx);
     }
 
-//        case 0: return simulation.get_rho()[i];
-//        //velocity
-//        case 1: {
-//            fftw_real* vx = simulation.get_vx();
-//            fftw_real* vy = simulation.get_vy();
-//            return simulation.get_length(vx[i], vy[i]);
-//        };
-//        //force
-//        case 2: {
-//            fftw_real* fx = simulation.get_fx();
-//            fftw_real* fy = simulation.get_fy();
-//            return simulation.get_length(fx[i], fy[i]);
-//        };
+
 
 //        //divergence
 //        case 3: {
 //            float div = clamp(simulation.get_divergence()[i], -1.0,1.0);
 //            return (div+1.0)*0.5;
 //        }
-//    }
 }
 
 
@@ -417,7 +403,6 @@ void Visualization::paintSmoke(float wn, float hn)
             set_colormap(get_scalar(idx1));    glVertex2f(px1, py1);
             set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
 
-//set_colormap(get_scalar(idx0));    glVertex3f(px0-1, py0-1,get_scalar_height(idx0));
             set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
             set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
             set_colormap(get_scalar(idx3));    glVertex2f(px3, py3);

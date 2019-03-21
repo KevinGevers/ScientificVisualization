@@ -14,7 +14,8 @@ public:
     void solve(int n, double* vx, double* vy, double* vx0, double* vy0, double visc, double dt);
     void diffuse_matter(int n, double *vx, double *vy, double *rho, double *rho0, double dt);
     void set_forces(void);
-    void calc_divergence(int vectorField);
+    void calc_divergence(int mode);
+
     void do_one_simulation_step(void);
     void drag(int mx, int my, int winWidth, int winHeight);
 
@@ -45,7 +46,7 @@ public:
     double *get_fy();
     float get_fxf(int idx);
     float get_fyf(int idx);
-
+    float get_divergence(int idx);
 
 private:
     int dim;
@@ -59,6 +60,7 @@ private:
     double *rho, *rho0;			//smoke density at the current (rho) and previous (rho0) moment
     double rho_max;
     double rho_min;
+    double *divergence;
 };
 
 #endif // SIMULATION_H
