@@ -145,6 +145,7 @@ void Visualization::direction_to_color(float x, float y, int method)
     glColor3f(r,g,b);
 }
 
+
 void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, float j)
 {
     glBegin(GL_LINES);
@@ -159,16 +160,16 @@ void Visualization::draw_hedgehogs(QVector2D data, float wn, float hn, float i, 
     glEnd();
 }
 
+
 void draw_cone(QVector3D p1, QVector3D p2, float r, int n)
 {
-    glEnable(GL_DEPTH_TEST);
     QVector3D d = p2-p1;
     d.normalize();
 
     QQuaternion rotation = QQuaternion::fromDirection(d, QVector3D(0,0,1));
 
     QVector<QVector3D> points;
-    // calculate cone bottom circl
+    // calculate cone bottom circle
     float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
     for (int i = 0; i < n; i++) {
         QVector3D point = QVector3D(r * cos(t * i), -r * sin(t*i), 0);
@@ -196,6 +197,62 @@ void draw_cone(QVector3D p1, QVector3D p2, float r, int n)
     glNormal3f(0, 0, 1);
 }
 
+
+void draw_cylinder(QVector3D point_1, QVector3D point_2, float r, int n)
+{
+    QVector3D d = point_2 - point_1;
+    d.normalize();
+
+    QQuaternion rotation = QQuaternion::fromDirection(d, QVector3D(0,0,1));
+
+    QVector<QVector3D> points;
+    // calculate circle
+    float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
+    for (int i = 0; i < n; i++) {
+        QVector3D point = QVector3D(r * cos(t * i), -r * sin(t*i), 0);
+        point = rotation * point;
+        points.push_back(point);
+    }
+
+    // draw cylinder (bottomless)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glBegin(GL_TRIANGLES);
+    for (int i = 1; i <= n; ++i) {
+        QVector3D p1 = points[i-1] + point_1;
+        QVector3D p2 = points[i%n] + point_1;
+        QVector3D p3 = points[i-1] + point_2;
+        QVector3D p4 = points[i%n] + point_2;
+
+        QVector3D norm = QVector3D::crossProduct(p2 - p3, p1 - p2);
+        norm.normalize();
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p1.x(), p1.y(), p1.z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p2.x(), p2.y(), p2.z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p3.x(), p3.y(), p3.z());
+
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p2.x(), p2.y(), p2.z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p3.x(), p3.y(), p3.z());
+        glNormal3f(norm.x(), norm.y(), norm.z());
+        glVertex3f(p4.x(), p4.y(), p4.z());
+    }
+    glEnd();
+
+    glDisable(GL_DEPTH_TEST);
+    glNormal3f(0, 0, 1);
+}
+
+
+void draw_arrow(QVector3D point_1, QVector3D point_2)
+{
+    float size = point_1.distanceToPoint(point_2);
+    draw_cone(point_1 + (point_2 - point_1) / 3, point_2, size/3.0f, 10);
+    draw_cylinder(point_1, point_1 + (point_2 - point_1) / 3, size/6.0f, 10);
+}
+
 void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, float j)
 {
     QVector3D p1 = QVector3D(wn + i * wn, hn + j * hn, 0);
@@ -203,10 +260,12 @@ void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, floa
     draw_cone(p1, p2, p1.distanceToPoint(p2) / 3.0f, 10);
 }
 
+
 void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, float j)
 {
-    //TODO: implement the function
-    printf("draw_arrows() is not yet implemented!\n");
+    QVector3D p1 = QVector3D(wn + i * wn - vec_scale * data.x() / 2.0f, hn + j * hn - vec_scale * data.y() / 2.0f, 0);
+    QVector3D p2 = QVector3D((wn + i * wn) + vec_scale * data.x() / 2.0f, (hn + j * hn) + vec_scale * data.y() / 2.0f, 0);
+    draw_arrow(p1, p2);
 }
 
 //QVector2D Visualization::interpolateLineData(float adj_i, float adj_j)
@@ -237,10 +296,22 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
 {
     int dim = simulation->get_dim();
     QVector2D point1, point2, point3, point4, target, point1Data, point2Data, point3Data, point4Data;
-    point1 = QVector2D(floor(adj_i), ceil(adj_i)); //Top Left
-    point2 = QVector2D(ceil(adj_i), ceil(adj_j)); //Top Right
-    point3 = QVector2D(floor(adj_i), floor(adj_j)); //Bottom Left
-    point4 = QVector2D(ceil(adj_i), floor(adj_j)); //Bottom Right
+
+    int idx_i1 = floor(adj_i);
+    int idx_i2 = ceil(adj_i);
+    int idx_j1 = floor(adj_j);
+    int idx_j2 = ceil(adj_j);
+
+    if (idx_i1 == idx_i2)
+        idx_i2++;
+
+    if (idx_j1 == idx_j2)
+        idx_j2++;
+
+    point1 = QVector2D(idx_i1, idx_i2); //Top Left
+    point2 = QVector2D(idx_i2, idx_j2); //Top Right
+    point3 = QVector2D(idx_i1, idx_j1); //Bottom Left
+    point4 = QVector2D(idx_i2, idx_j1); //Bottom Right
     target = QVector2D(adj_i, adj_j); //Target point
 
 
@@ -263,13 +334,13 @@ QVector2D Visualization::interpolateData(float adj_i, float adj_j)
     yDistTop = point1.y() - target.y();
     xDistBottom = target.x() - point3.x();
     yDistBottom = target.y() - point3.y();
-    float solutionX = 1.0 / (totalXdist*totalYdist) * (
+    float solutionX = 1.0f / (totalXdist*totalYdist) * (
                 point3Data.x() * xDistTop * yDistTop +
                 point4Data.x() * xDistBottom * yDistTop +
                 point1Data.x() * xDistTop * yDistBottom +
                 point2Data.x() * xDistBottom * yDistBottom
                 );
-    float solutionY = 1.0 / (totalXdist*totalYdist) * (
+    float solutionY = 1.0f / (totalXdist*totalYdist) * (
                 point3Data.y() * xDistTop * yDistTop +
                 point4Data.y() * xDistBottom * yDistTop +
                 point1Data.y() * xDistTop * yDistBottom +
@@ -486,7 +557,7 @@ void Visualization::paintGL()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -20, 20);
+    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
 
 
 
