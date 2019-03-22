@@ -28,7 +28,10 @@ void Visualization::do_one_simulation_step()
 {
     if(!frozen){
         simulation->do_one_simulation_step();
-        if (smokeMode) simulation->calc_divergence(smokeMode);
+        if (smokeMode)
+        {
+            simulation->calc_divergence(smokeMode);
+        }
         update();
     }
 }
@@ -287,21 +290,13 @@ void Visualization::paintVectors(float wn, float hn)
 }
 
 float Visualization:: get_scalar(int idx){
-    switch (smokeMode)
-    {
-        case 0: // density
-            return simulation->get_rhof(idx);
-        case 1: // divergence
-            return simulation->get_divergence(idx);
+    if (smokeMode)
+    { // divergence
+        // the results here are not completely correct due to scaling and clipping!
+        return simulation->get_divergence(idx);
+    } else { // density
+        return simulation->get_rhof(idx);
     }
-
-
-
-//        //divergence
-//        case 3: {
-//            float div = clamp(simulation.get_divergence()[i], -1.0,1.0);
-//            return (div+1.0)*0.5;
-//        }
 }
 
 

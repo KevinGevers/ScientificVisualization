@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>               //for various math functions
 #include <limits>
+#include <QDebug>
 #include "simulation.h"
 
 Simulation::Simulation(int n)
@@ -10,7 +11,6 @@ Simulation::Simulation(int n)
     init_simulation(n);
 }
 
-//float Simulation::get_length(float x, float y) {return sqrt(x*x + y*y);}
 
 //init_simulation: Initialize simulation data structures as a function of the grid size 'n'.
 //                 Although the simulation takes place on a 2D grid, we allocate all data structures as 1D arrays,
@@ -29,6 +29,7 @@ void Simulation::init_simulation(int n)
     fy      = static_cast<double*>(malloc(dim));
     rho     = static_cast<double*>(malloc(dim));
     rho0    = static_cast<double*>(malloc(dim));
+    divergence = static_cast<double*>(malloc(dim));
 //    plan_rc = rfftw2d_create_plan(n, n, double_TO_COMPLEX, FFTW_IN_PLACE);
 //    plan_cr = rfftw2d_create_plan(n, n, FFTW_COMPLEX_TO_REAL, FFTW_IN_PLACE);
 
@@ -162,61 +163,48 @@ void Simulation::set_forces(void)
         vy0[i]    = fy[i];
     }
 }
-//// emilio's code, remove before submitting!
-//void Simulation::calc_divergence(int vector_data_set, int DIM){
 
-//        fftw_real* datax;
-//        fftw_real* datay;
-//        switch(vector_data_set){
-//        case 0:
-//            datax = this->get_vx();
-//            datay = this->get_vy();
-//        break;
-//        case 1:
-//            datax = this->get_fx();
-//            datay = this->get_fy();
-//        break;
-//        }
-
-
-//        float  wn = 2.0 / DIM;   // Grid cell width
-//        float  hn = 2.0 / DIM;  // Grid cell height
-
-//        int i;
-//        for (i = 0; i < DIM * DIM; i++)
-//        {
-//            float upper = this->get_length(datax[i-DIM], datay[i-DIM]);
-//            float below = this->get_length(datax[i+DIM], datay[i+DIM]);
-//            float left =  this->get_length(datax[i-1], datay[i-1]);
-//            float right = this->get_length(datax[i+1], datay[i+1]);
-
-//            float diff_x = ((left-right)/wn);
-//            float diff_y = ((upper-below)/hn);
-
-//            float result_d = (diff_x + diff_y);
-//            if (result_d > max_divergence)
-//                max_divergence = result_d;
-//            if (result_d < min_divergence)
-//                min_divergence = result_d;
-
-//            divergence[i] =result_d;
-//       }
-//}
-
+float get_length(float x, float y)
+{
+    return sqrt(x*x + y*y);
+}
 
 
 void Simulation::calc_divergence(int mode)
 {
     double *dataX, *dataY;
     if (mode)
-    {
-        dataX = this->get_vx();
-        dataY = this->get_vy();
-    } else {
-        dataX = this->get_fx();
-        dataY = this->get_fy();
+    { //based on velocity
+        dataX = get_vx();
+        dataY = get_vy();
+    } else { //based on force
+        dataX = get_fx();
+        dataY = get_fy();
     }
 
+    int dim = get_dim(), min_idx_x, max_idx_x, min_idx_y, max_idx_y;
+    float left, right, above, below, divX, divY;
+    for (int i=0; i<dim*dim; i++)
+    {
+        min_idx_y = i-dim < 0 ? 0 : i-dim;
+        max_idx_y = i+dim > dim*dim ? dim*dim : i+dim;
+        min_idx_x = i-1 < 0 ? 0 : i-1;
+        max_idx_x = i+1 > dim*dim ? dim*dim : i+1;
+
+        above = get_length(dataX[min_idx_y], dataY[min_idx_y]);
+        below = get_length(dataX[max_idx_y], dataY[max_idx_y]);
+        left = get_length(dataX[min_idx_x], dataY[min_idx_x]);
+        right = get_length(dataX[max_idx_x], dataY[max_idx_x]);
+//        if (divX+divY > max_divergence)
+//            max_divergence = divX+divY;
+//        if (divX+divY < min_divergence)
+//            min_divergence = divX+divY;
+        divX = (left-right);
+        divY = (above-below);
+        //qDebug() << (divX+divY);
+        divergence[i] = (divX+divY) * 5 + 0.5;
+    }
+    //qDebug() << min_divergence << " " << max_divergence;
 }
 
 

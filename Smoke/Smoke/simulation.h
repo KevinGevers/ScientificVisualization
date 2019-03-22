@@ -50,6 +50,8 @@ public:
 
 private:
     int dim;
+    float max_divergence = 0;
+    float min_divergence = 0;
 
     //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
     double dt = 0.4;				//simulation time step
