@@ -16,7 +16,7 @@ using namespace std;
 
 Visualization::Visualization(QWidget *parent) : QOpenGLWidget(parent)
 {
-    qDebug() << "Constructor of GLWidget";
+    qDebug() << "Constructor of Visualization";
     simulation = new Simulation(50);
     QTimer *timer = new QTimer;
     timer->start();
@@ -171,99 +171,6 @@ void draw_circle(QVector2D p1, float rx, float ry, int n)
     glEnd();
 }
 
-void draw_cone(QVector3D p1, QVector3D p2, float r, int n)
-{
-    QVector3D d = p2-p1;
-    d.normalize();
-
-    QQuaternion rotation = QQuaternion::fromDirection(d, QVector3D(0,0,1));
-
-    QVector<QVector3D> points;
-    // calculate cone bottom circle
-    float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
-    for (int i = 0; i < n; i++) {
-        QVector3D point = QVector3D(r * cos(t * i), -r * sin(t*i), 0);
-        point = rotation * point;
-        point += p1;
-        points.push_back(point);
-    }
-
-    // draw cone (bottomless)
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBegin(GL_TRIANGLES);
-    for (int i = 1; i <= n; ++i) {
-        QVector3D norm = QVector3D::crossProduct(points[i%n] - p2, points[i-1] - points[i%n]);
-        norm.normalize();
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p2.x(), p2.y(), p2.z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(points[i%n].x(), points[i%n].y(), points[i%n].z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(points[i-1].x(), points[i-1].y(), points[i-1].z());
-    }
-    glEnd();
-
-    glDisable(GL_DEPTH_TEST);
-    glNormal3f(0, 0, 1);
-}
-
-
-void draw_cylinder(QVector3D point_1, QVector3D point_2, float r, int n)
-{
-    QVector3D d = point_2 - point_1;
-    d.normalize();
-
-    QQuaternion rotation = QQuaternion::fromDirection(d, QVector3D(0,0,1));
-
-    QVector<QVector3D> points;
-    // calculate circle
-    float t = 2 * static_cast<float>(M_PI) / static_cast<float>(n);
-    for (int i = 0; i < n; i++) {
-        QVector3D point = QVector3D(r * cos(t * i), -r * sin(t*i), 0);
-        point = rotation * point;
-        points.push_back(point);
-    }
-
-    // draw cylinder (bottomless)
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBegin(GL_TRIANGLES);
-    for (int i = 1; i <= n; ++i) {
-        QVector3D p1 = points[i-1] + point_1;
-        QVector3D p2 = points[i%n] + point_1;
-        QVector3D p3 = points[i-1] + point_2;
-        QVector3D p4 = points[i%n] + point_2;
-
-        QVector3D norm = QVector3D::crossProduct(p2 - p3, p1 - p2);
-        norm.normalize();
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p1.x(), p1.y(), p1.z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p2.x(), p2.y(), p2.z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p3.x(), p3.y(), p3.z());
-
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p2.x(), p2.y(), p2.z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p3.x(), p3.y(), p3.z());
-        glNormal3f(norm.x(), norm.y(), norm.z());
-        glVertex3f(p4.x(), p4.y(), p4.z());
-    }
-    glEnd();
-
-    glDisable(GL_DEPTH_TEST);
-    glNormal3f(0, 0, 1);
-}
-
-
-void draw_arrow(QVector3D point_1, QVector3D point_2)
-{
-    float size = point_1.distanceToPoint(point_2);
-    draw_cone(point_1 + (point_2 - point_1) / 3, point_2, size/3.0f, 10);
-    draw_cylinder(point_1, point_1 + (point_2 - point_1) / 3, size/6.0f, 10);
-}
-
-
 void Visualization::draw_circles(QVector2D data, float wn, float hn, float i, float j)
 {
     QVector2D p1 = QVector2D(wn + i * wn, hn + j * hn);
@@ -275,7 +182,8 @@ void Visualization::draw_cones(QVector2D data, float wn, float hn, float i, floa
 {
     QVector3D p1 = QVector3D(wn + i * wn, hn + j * hn, 0);
     QVector3D p2 = QVector3D((wn + i * wn) + vec_scale * data.x(), (hn + j * hn) + vec_scale * data.y(), 0);
-    draw_cone(p1, p2, p1.distanceToPoint(p2) / 3.0f, 10);
+//    draw_cone(p1, p2, p1.distanceToPoint(p2) / 3.0f, 10);
+    cone.draw(p1, p2);
 }
 
 
@@ -283,7 +191,9 @@ void Visualization::draw_arrows(QVector2D data, float wn, float hn, float i, flo
 {
     QVector3D p1 = QVector3D(wn + i * wn - vec_scale * data.x() / 2.0f, hn + j * hn - vec_scale * data.y() / 2.0f, 0);
     QVector3D p2 = QVector3D((wn + i * wn) + vec_scale * data.x() / 2.0f, (hn + j * hn) + vec_scale * data.y() / 2.0f, 0);
-    draw_arrow(p1, p2);
+
+    cone.draw(p1 + (p2 - p1) / 3, p2);
+    cylinder.draw(p1, p1 + (p2 - p1) / 3);
 }
 
 QVector2D Visualization::interpolateData(float adj_i, float adj_j)
@@ -345,7 +255,6 @@ void Visualization::paintVectors(float wn, float hn)
 {
     float adj_i, adj_j;
     QVector2D data;
-    glBegin(GL_LINES);
     int dim = simulation->get_dim();
     srand(jitter_seed);
     // This draws a glyph for every raster point in the set dimension (standard is 50)
@@ -360,6 +269,8 @@ void Visualization::paintVectors(float wn, float hn)
             if (vec_jitter) {
                 adj_i += ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) - .5f) * dim / static_cast <float> (glyphXAmount);
                 adj_j += ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) - .5f) * dim / static_cast <float> (glyphYAmount);
+                if (adj_i < 0 || adj_i > dim-1 || adj_j < 0 || adj_j > dim-1)
+                    continue;
             }
 
             data = interpolateData(adj_i, adj_j);

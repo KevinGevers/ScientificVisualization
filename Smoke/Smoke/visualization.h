@@ -7,6 +7,8 @@
 
 #include <fftw3.h>
 
+#include "cone.h"
+#include "cylinder.h"
 #include "simulation.h"
 
 
@@ -75,6 +77,8 @@ protected:
 
 private:
     Simulation* simulation;
+    Cone cone = Cone(6, 1/3.0f);
+    Cylinder cylinder = Cylinder(6, 1/3.0f);
     float hue = 0.0;
     float saturation = 1.0;
     int nlevels = 256;

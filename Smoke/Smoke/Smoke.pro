@@ -28,12 +28,16 @@ SOURCES += \
         main.cpp \
         smokewindow.cpp \
     simulation.cpp \
-    visualization.cpp
+    visualization.cpp \
+    cone.cpp \
+    cylinder.cpp
 
 HEADERS += \
         smokewindow.h \
     simulation.h \
-    visualization.h
+    visualization.h \
+    cone.h \
+    cylinder.h
 
 FORMS += \
         smokewindow.ui
