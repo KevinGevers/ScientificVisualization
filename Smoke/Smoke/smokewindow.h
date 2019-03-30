@@ -62,6 +62,16 @@ private slots:
 
     void on_jitterVectors_stateChanged(int arg1);
 
+    void on_Isoline_stateChanged(int arg1);
+
+    void on_ThresholdSlider_valueChanged(int value);
+
+    void on_NumberIsolinesSlider_valueChanged(int value);
+
+    void on_MinRhoSlider_valueChanged(int value);
+
+    void on_MaxRhoSlider_valueChanged(int value);
+
 private:
     Ui::SmokeWindow *ui;
 };

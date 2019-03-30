@@ -4,7 +4,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLExtraFunctions>
 #include <QMouseEvent>
-
+#include <bitset>
 #include <fftw3.h>
 
 #include "cone.h"
@@ -19,7 +19,7 @@ public:
     explicit Visualization(QWidget *parent = nullptr);
     void rainbow(float value,float* R,float* G,float* B);
     void set_colormap(float vy);
-    void direction_to_color(float x, float y, int method);
+    void direction_to_color(float x, float y);
     void visualize(void);
     void display(void);
     void reshape(int w, int h);
@@ -51,10 +51,15 @@ public:
     void set_color_based_on(int option);
     void set_scale_colors(int value);
     void set_smoke_mode(int mode);
-
+    void set_isolines(int state);
+    void set_threshold(int value);
+    void set_number_isolines(int value);
+    void set_min_rho(int value);
+    void set_max_rho(int value);
 
     float get_color_max();
     float get_color_min();
+
 public slots:
     void do_one_simulation_step();
 
@@ -74,7 +79,7 @@ protected:
     QVector2D interpolateData(float adj_i, float adj_j);
     //QVector2D calcDatapoint(int i, int j, float adj_i, float adj_j);
     float get_scalar(int idx);
-
+    void paintIsolines(float threshold, float wn, float hn);
 private:
     Simulation* simulation;
     Cone cone = Cone(6, 1/3.0f);
@@ -97,6 +102,7 @@ private:
     int   draw_smoke = 1;           //draw the smoke or not
     int   draw_vecs = 0;            //draw the vector field or not
     int   draw_scale = 1;
+    int   draw_isolines = 0;
     const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
     const int COLOR_RAINBOW=1;
     const int COLOR_BANDS=2;
@@ -106,6 +112,10 @@ private:
     int   scale_colors = 1;
     float clipping_min = 0;
     float clipping_max = 1;
+    float threshold = 0.1;
+    int numberIsolines = 1;
+    float minRho = 0.0;
+    float maxRho = 1.0;
 };
 
 #endif // VISUALIZATION_H

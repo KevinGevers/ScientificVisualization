@@ -175,3 +175,28 @@ void SmokeWindow::on_jitterVectors_stateChanged(int state)
 {
     ui->VisualizationWidget->set_vector_jitter(state/2);
 }
+
+void SmokeWindow::on_Isoline_stateChanged(int state)
+{
+    ui->VisualizationWidget->set_isolines(state/2);
+}
+
+void SmokeWindow::on_ThresholdSlider_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_threshold(value);
+}
+
+void SmokeWindow::on_NumberIsolinesSlider_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_number_isolines(value);
+}
+
+void SmokeWindow::on_MinRhoSlider_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_min_rho(value);
+}
+
+void SmokeWindow::on_MaxRhoSlider_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_max_rho(value);
+}

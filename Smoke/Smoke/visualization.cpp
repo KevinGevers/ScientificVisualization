@@ -7,7 +7,7 @@
 #include <QPainter>
 #include <QVector3D>
 #include <QVector2D>
-
+#include <bitset>
 #include <QTimer>
 #include <QVector3D>
 #include <QQuaternion>
@@ -127,12 +127,12 @@ void Visualization::set_colormap(float vy)
 
 
 //direction_to_color: Set the current color by mapping a direction vector (x,y), using
-//                    the color mapping method 'method'. If method==1, map the vector direction
-//                    using a rainbow colormap. If method==0, simply use the white color
-void Visualization::direction_to_color(float x, float y, int method)
+//                    the color mapping method 'color_dir'. If color_dir==1, map the vector direction
+//                    using a rainbow colormap. If color_dir==0, simply use the white color
+void Visualization::direction_to_color(float x, float y)
 {
     float r,g,b,f;
-    if (method)
+    if (color_dir)
     {
       f = atan2(y,x) / 3.1415927f + 1;
       r = f;
@@ -277,7 +277,7 @@ void Visualization::paintVectors(float wn, float hn)
             }
 
             data = interpolateData(adj_i, adj_j);
-            direction_to_color(data.x(), data.y(), color_dir);
+            direction_to_color(data.x(), data.y());
 
             switch(shape) {
                 case 0: draw_hedgehogs(data, wn, hn, adj_i, adj_j); break;
@@ -287,6 +287,64 @@ void Visualization::paintVectors(float wn, float hn)
             }
         }
     }
+}
+
+void Visualization::paintIsolines(float threshold, float wn, float hn)
+{
+    int dim = simulation->get_dim();
+    std::bitset<4> marchingsq;
+    float point1, point2, point3, point4;
+    float x1, x2, y1, y2;
+
+    glBegin(GL_LINES);
+    for(int i=0; i<dim; i++) {
+        for(int j=0; j<dim; j++) {
+            marchingsq.reset();
+
+            point1 = simulation->get_rhof(j*dim + i);
+            point2 = simulation->get_rhof(j*dim + i+1);
+            point3 = simulation->get_rhof((j+1)*dim + i+1);
+            point4 = simulation->get_rhof((j+1)*dim + i);
+
+            if(point1>threshold) marchingsq.flip(3);
+            if(point2>threshold) marchingsq.flip(2);
+            if(point3>threshold) marchingsq.flip(1);
+            if(point4>threshold) marchingsq.flip(0);
+
+            switch(marchingsq.to_ulong()) {
+                case 0: break;
+                case 1:  x1 =  i*wn;         y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
+                case 2:  x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
+                case 3:  x1 =  i*wn;         y1 = (j+0.5)*hn;    x2 = (i+1)*wn;      y2 = (j+0.5)*hn;break;
+                case 4:  x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 5: //has 2 cases, so draw both
+                         x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;
+                         glVertex2f(x1-1, y1-1);
+                         glVertex2f(x2-1, y2-1);
+                         x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 6:  x1 = (i+0.5)*wn;    y1 = j*hn;          x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
+                case 7:  x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 8:  x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 9:  x1 = (i+0.5)*wn;    y1 = j*hn;          x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
+                case 10: //has 2 cases, so draw both
+                         x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j)*hn;
+                         glVertex2f(x1-1, y1-1);
+                         glVertex2f(x2-1, y2-1);
+                         x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
+                case 11: x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 12: x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+1)*wn;      y2 = (j+0.5)*hn; break;
+                case 13: x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
+                case 14: x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
+                case 15: break;
+            }
+            glLineWidth(1.0);
+            set_scaled_colormap(threshold);
+            glVertex2f(x1-1, y1-1);
+            glVertex2f(x2-1, y2-1);
+
+        }
+    }
+    glEnd();
 }
 
 float Visualization:: get_scalar(int idx){
@@ -402,6 +460,15 @@ void Visualization::visualize()
 
     if (draw_scale)
         paintLegend(wn, hn);
+
+    if (draw_isolines && numberIsolines > 1) {
+        float stepsize = (maxRho-minRho)/(numberIsolines+1);
+        for(int i=1; i<=numberIsolines; i++) {
+            paintIsolines(minRho+(stepsize*i), wn, hn);
+        }
+    } else if(draw_isolines) {
+        paintIsolines(threshold, wn, hn);
+    }
 }
 
 
@@ -540,4 +607,29 @@ void Visualization::set_scale_colors(int value)
 void Visualization::set_smoke_mode(int mode)
 {
     smokeMode = mode;
+}
+
+void Visualization::set_isolines(int state)
+{
+    draw_isolines = state;
+}
+
+void Visualization::set_threshold(int value)
+{
+    threshold = (float)value/10;
+}
+
+void Visualization::set_number_isolines(int value)
+{
+    numberIsolines = value;
+}
+
+void Visualization::set_min_rho(int value)
+{
+    minRho = (float)value/10;
+}
+
+void Visualization::set_max_rho(int value)
+{
+    maxRho = (float)value/10;
 }
