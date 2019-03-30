@@ -364,7 +364,7 @@ void Visualization::paintSmoke(float wn, float hn)
     float px0, py0, px1, py1, px2, py2, px3, py3;
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glBegin(GL_TRIANGLES);
+
     for (int j = 0; j < simulation->get_dim() - 1; j++)            //draw smoke
     {
         for (int i = 0; i < simulation->get_dim() - 1; i++)
@@ -388,13 +388,22 @@ void Visualization::paintSmoke(float wn, float hn)
             py3 = hn + j * hn;
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
-            set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
-            set_colormap(get_scalar(idx1));    glVertex2f(px1, py1);
-            set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
+            if (height_plot) {
+//                glBegin(GL_QUADS);
+//                set_colormap(get_scalar(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
+//                set_colormap(get_scalar(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
+//                set_colormap(get_scalar(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
+//                set_colormap(get_scalar(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
+            } else {
+                glBegin(GL_TRIANGLES);
+                set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
+                set_colormap(get_scalar(idx1));    glVertex2f(px1, py1);
+                set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
 
-            set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
-            set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
-            set_colormap(get_scalar(idx3));    glVertex2f(px3, py3);
+                set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
+                set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
+                set_colormap(get_scalar(idx3));    glVertex2f(px3, py3);
+            }
         }
     }
     glEnd();
@@ -482,18 +491,29 @@ void Visualization::paintGL()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
 
+    if (height_plot) {
+//        glOrtho(-2, 2, -2, 2, -2, 2);
+//        glRotatef(340.0, 1.0, 0.0, 0.0);
+//        glRotatef(0, 0.0, 1.0, 0.0);
+//        glRotatef(217.0, 0.0, 0.0, 1.0);
+    } else {
+        glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
+    }
+    qDebug() << static_cast<GLdouble>(width()) << " " << static_cast<GLdouble>(height());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+//    float light[4] = {1,1,1,0};
+//    glLightfv(GL_LIGHT0, GL_POSITION, light);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
 
     visualize();
     glFlush();
+
 }
 
 
@@ -632,4 +652,9 @@ void Visualization::set_min_rho(int value)
 void Visualization::set_max_rho(int value)
 {
     maxRho = (float)value/10;
+}
+
+void Visualization::set_heightplot(int state)
+{
+    height_plot = state;
 }

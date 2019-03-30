@@ -72,6 +72,8 @@ private slots:
 
     void on_MaxRhoSlider_valueChanged(int value);
 
+    void on_HeightPlot_stateChanged(int arg1);
+
 private:
     Ui::SmokeWindow *ui;
 };

@@ -56,6 +56,7 @@ public:
     void set_number_isolines(int value);
     void set_min_rho(int value);
     void set_max_rho(int value);
+    void set_heightplot(int state);
 
     float get_color_max();
     float get_color_min();
@@ -116,6 +117,7 @@ private:
     int numberIsolines = 1;
     float minRho = 0.0;
     float maxRho = 1.0;
+    int height_plot=0;
 };
 
 #endif // VISUALIZATION_H

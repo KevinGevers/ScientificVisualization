@@ -183,28 +183,32 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_3">
                 <item>
-                 <widget class="QCheckBox" name="showVectors">
-                  <property name="text">
-                   <string>Show</string>
-                  </property>
-                  <property name="checked">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="vectorColor">
-                  <property name="text">
-                   <string>Colour</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="jitterVectors">
-                  <property name="text">
-                   <string>Jitter</string>
-                  </property>
-                 </widget>
+                 <layout class="QGridLayout" name="OptionBox">
+                  <item row="0" column="0">
+                   <widget class="QCheckBox" name="showVectors">
+                    <property name="text">
+                     <string>Show</string>
+                    </property>
+                    <property name="checked">
+                     <bool>false</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QCheckBox" name="jitterVectors">
+                    <property name="text">
+                     <string>Jitter</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QCheckBox" name="vectorColor">
+                    <property name="text">
+                     <string>Colour</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <widget class="QLabel" name="ScaleLabel">
@@ -316,46 +320,96 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLabel" name="XSamplingLabel">
+                 <layout class="QHBoxLayout" name="GlyphSamplingLabelBox">
+                  <item>
+                   <widget class="QLabel" name="XSamplingLabel">
+                    <property name="text">
+                     <string>X Sampling: 50</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="YSamplingLabel">
+                    <property name="text">
+                     <string>Y Sampling: 50</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="GlyphSamplingSliderBox">
+                  <item>
+                   <widget class="QSlider" name="GlyphXSampler">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="sliderPosition">
+                     <number>50</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QSlider" name="GlyphYSampler">
+                    <property name="minimum">
+                     <number>1</number>
+                    </property>
+                    <property name="maximum">
+                     <number>100</number>
+                    </property>
+                    <property name="sliderPosition">
+                     <number>50</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="HeightPlotBox">
+               <property name="title">
+                <string>Height plot</string>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_9">
+                <property name="leftMargin">
+                 <number>9</number>
+                </property>
+                <property name="topMargin">
+                 <number>9</number>
+                </property>
+                <property name="rightMargin">
+                 <number>9</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>9</number>
+                </property>
+                <item>
+                 <widget class="QCheckBox" name="HeightPlot">
                   <property name="text">
-                   <string>X Sampling</string>
+                   <string>Show</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="GlyphXSampler">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="sliderPosition">
-                   <number>50</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="YSamplingLabel">
+                 <widget class="QLabel" name="RotateLabel">
                   <property name="text">
-                   <string>Y Sampling</string>
+                   <string>Rotate: 0 degree</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QSlider" name="GlyphYSampler">
-                  <property name="minimum">
-                   <number>1</number>
-                  </property>
-                  <property name="maximum">
-                   <number>100</number>
-                  </property>
-                  <property name="sliderPosition">
-                   <number>50</number>
-                  </property>
+                 <widget class="QSlider" name="RotateSlider">
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
                   </property>
@@ -484,7 +538,7 @@
           <item>
            <widget class="QLabel" name="NumberColorsLabel">
             <property name="text">
-             <string>Number of Colours</string>
+             <string>Number of Colours: 256</string>
             </property>
            </widget>
           </item>
@@ -586,14 +640,14 @@
             <item>
              <widget class="QLabel" name="MinClippingLabel">
               <property name="text">
-               <string>Min Clipping</string>
+               <string>Min Clipping: 0.0</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QLabel" name="MaxClippingLabel">
               <property name="text">
-               <string>Max Clipping</string>
+               <string>Max Clipping: 1.0</string>
               </property>
              </widget>
             </item>
@@ -648,7 +702,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QGroupBox" name="verticalGroupBox">
+        <widget class="QGroupBox" name="IsolinesBox">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -681,7 +735,7 @@
           <item>
            <widget class="QLabel" name="ThresholdLabel">
             <property name="text">
-             <string>Threshold</string>
+             <string>Threshold: 0</string>
             </property>
            </widget>
           </item>
@@ -704,7 +758,7 @@
           <item>
            <widget class="QLabel" name="NumberIsolinesLabel">
             <property name="text">
-             <string>Number of isolines</string>
+             <string>Number of isolines: 1</string>
             </property>
            </widget>
           </item>
@@ -729,14 +783,14 @@
             <item>
              <widget class="QLabel" name="MinRhoLabel">
               <property name="text">
-               <string>Min Rho</string>
+               <string>Min Rho: 0</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QLabel" name="MaxRhoLabel">
               <property name="text">
-               <string>Max Rho</string>
+               <string>Max Rho: 1</string>
               </property>
              </widget>
             </item>
@@ -797,7 +851,7 @@
     <item>
      <widget class="Visualization" name="VisualizationWidget">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
