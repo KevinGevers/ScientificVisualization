@@ -389,11 +389,11 @@ void Visualization::paintSmoke(float wn, float hn)
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
             if (height_plot) {
-//                glBegin(GL_QUADS);
-//                set_colormap(get_scalar(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
-//                set_colormap(get_scalar(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
-//                set_colormap(get_scalar(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
-//                set_colormap(get_scalar(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
+                glBegin(GL_QUADS);
+                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
+                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
+                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
+                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
             } else {
                 glBegin(GL_TRIANGLES);
                 set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
@@ -458,8 +458,14 @@ void Visualization::paintLegend(float wn, float hn)
 //visualize: This is the main visualization function
 void Visualization::visualize()
 {
-    float  wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1);   // Grid cell width
-    float  hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1);  // Grid cell heigh
+    float wn, hn;
+    if (height_plot) {
+        wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1)/5*3;   // Grid cell width
+        hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1)/5*3;  // Grid cell heigh
+    } else {
+        wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1);   // Grid cell width
+        hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1);  // Grid cell heigh
+    }
 
     if (draw_smoke)
         paintSmoke(wn, hn);
@@ -467,7 +473,7 @@ void Visualization::visualize()
     if (draw_vecs)
         paintVectors(wn, hn);
 
-    if (draw_scale)
+    if (draw_scale && !height_plot)
         paintLegend(wn, hn);
 
     if (draw_isolines && numberIsolines > 1) {
@@ -493,14 +499,13 @@ void Visualization::paintGL()
     glLoadIdentity();
 
     if (height_plot) {
-//        glOrtho(-2, 2, -2, 2, -2, 2);
-//        glRotatef(340.0, 1.0, 0.0, 0.0);
-//        glRotatef(0, 0.0, 1.0, 0.0);
-//        glRotatef(217.0, 0.0, 0.0, 1.0);
+        glOrtho(width()/5*-1, width()/10*7, height()/5*-1, height()/10*7, -50, 50);
+        glRotatef(325.0, 1.0, 0.0, 0.0);
+        glRotatef(10.0, 0.0, 1.0, 0.0);
+        glRotatef(325.0, 0.0, 0.0, 1.0);
     } else {
         glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
     }
-    qDebug() << static_cast<GLdouble>(width()) << " " << static_cast<GLdouble>(height());
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glShadeModel(GL_SMOOTH);
