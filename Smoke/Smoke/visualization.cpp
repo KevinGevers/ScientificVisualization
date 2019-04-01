@@ -297,14 +297,14 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
     float x1, x2, y1, y2;
 
     glBegin(GL_LINES);
-    for(int i=0; i<dim; i++) {
-        for(int j=0; j<dim; j++) {
+    for(int i=1; i<dim+1; i++) {
+        for(int j=1; j<dim+1; j++) {
             marchingsq.reset();
 
-            point1 = simulation->get_rhof(j*dim + i);
-            point2 = simulation->get_rhof(j*dim + i+1);
-            point3 = simulation->get_rhof((j+1)*dim + i+1);
-            point4 = simulation->get_rhof((j+1)*dim + i);
+            point1 = simulation->get_rhof((j-1) * dim + i-1);
+            point2 = simulation->get_rhof((j-1) * dim + i);
+            point3 = simulation->get_rhof(j * dim + i);
+            point4 = simulation->get_rhof(j * dim + i-1);
 
             if(point1>threshold) marchingsq.flip(3);
             if(point2>threshold) marchingsq.flip(2);
@@ -313,34 +313,98 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
 
             switch(marchingsq.to_ulong()) {
                 case 0: break;
-                case 1:  x1 =  i*wn;         y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
-                case 2:  x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
-                case 3:  x1 =  i*wn;         y1 = (j+0.5)*hn;    x2 = (i+1)*wn;      y2 = (j+0.5)*hn;break;
-                case 4:  x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
+                case 1: x1 =  i*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = (j+1)*hn;
+                break;
+                case 2: x1 = (i+1)*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = (j+1)*hn;
+                break;
+                case 3: x1 =  i*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+1)*wn;
+                        y2 = (j+0.5)*hn;
+                break;
+                case 4: x1 = (i+1)*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = j*hn;
+                break;
                 case 5: //has 2 cases, so draw both
-                         x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;
-                         glVertex2f(x1-1, y1-1);
-                         glVertex2f(x2-1, y2-1);
-                         x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
-                case 6:  x1 = (i+0.5)*wn;    y1 = j*hn;          x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
-                case 7:  x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
-                case 8:  x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
-                case 9:  x1 = (i+0.5)*wn;    y1 = j*hn;          x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
+                        x1 = (i+1)*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = (j+1)*hn;
+                        glVertex2f(x1-1, y1-1);
+                        glVertex2f(x2-1, y2-1);
+
+                        x1 = i*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = j*hn;
+                break;
+                case 6: x1 = (i+0.5)*wn;
+                        y1 = j*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = (j+1)*hn;
+                break;
+                case 7: x1 = i*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = j*hn;
+                break;
+                case 8: x1 = i*wn;
+                        y1 = (j+0.5)*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = j*hn;
+                break;
+                case 9: x1 = (i+0.5)*wn;
+                        y1 = j*hn;
+                        x2 = (i+0.5)*wn;
+                        y2 = (j+1)*hn;
+                break;
                 case 10: //has 2 cases, so draw both
-                         x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j)*hn;
+                         x1 = (i+1)*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+0.5)*wn;
+                         y2 = (j)*hn;
                          glVertex2f(x1-1, y1-1);
                          glVertex2f(x2-1, y2-1);
-                         x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
-                case 11: x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = j*hn; break;
-                case 12: x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+1)*wn;      y2 = (j+0.5)*hn; break;
-                case 13: x1 = (i+1)*wn;      y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn; break;
-                case 14: x1 = i*wn;          y1 = (j+0.5)*hn;    x2 = (i+0.5)*wn;    y2 = (j+1)*hn;  break;
+
+                         x1 = i*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+0.5)*wn;
+                         y2 = (j+1)*hn;
+                break;
+                case 11: x1 = (i+1)*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+0.5)*wn;
+                         y2 = j*hn;
+                break;
+                case 12: x1 = i*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+1)*wn;
+                         y2 = (j+0.5)*hn;
+                break;
+                case 13: x1 = (i+1)*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+0.5)*wn;
+                         y2 = (j+1)*hn;
+                break;
+                case 14: x1 = i*wn;
+                         y1 = (j+0.5)*hn;
+                         x2 = (i+0.5)*wn;
+                         y2 = (j+1)*hn;
+                break;
                 case 15: break;
             }
             glLineWidth(1.0);
             set_scaled_colormap(threshold);
-            glVertex2f(x1-1, y1-1);
-            glVertex2f(x2-1, y2-1);
+            glVertex2f(x1, y1);
+            glVertex2f(x2, y2);
 
         }
     }
@@ -511,8 +575,6 @@ void Visualization::paintGL()
     glShadeModel(GL_SMOOTH);
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-//    float light[4] = {1,1,1,0};
-//    glLightfv(GL_LIGHT0, GL_POSITION, light);
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
 
