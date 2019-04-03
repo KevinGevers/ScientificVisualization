@@ -406,7 +406,12 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                 case 15: break;
             }
             glLineWidth(1.0);
-            set_scaled_colormap(threshold);
+            if (isolineColor)
+            {
+                set_scaled_colormap(threshold);
+            } else {
+                glColor3f(256,256,256);
+            }
             glVertex2f(x1, y1);
             glVertex2f(x2, y2);
 
@@ -758,4 +763,9 @@ void Visualization::set_heightplot(int state)
 void Visualization::set_rotation(int value)
 {
     rotation = value;
+}
+
+void Visualization::set_isoline_color(int state)
+{
+    isolineColor = state;
 }

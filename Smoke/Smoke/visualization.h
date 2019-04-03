@@ -58,6 +58,7 @@ public:
     void set_max_rho(int value);
     void set_heightplot(int state);
     void set_rotation(int value);
+    void set_isoline_color(int state);
 
     float get_color_max();
     float get_color_min();
@@ -98,9 +99,9 @@ private:
     int jitter_seed = 0;
 
     //--- VISUALIZATION PARAMETERS ---------------------------------------------------------------------
-    int   color_dir = 0;            //use direction color-coding or not
+    int   color_dir = 1;            //use direction color-coding or not
     float vec_scale = 1000;			//scaling of hedgehogs
-    int   vec_jitter = 0;
+    int   vec_jitter = 1;
     int   draw_smoke = 1;           //draw the smoke or not
     int   draw_vecs = 0;            //draw the vector field or not
     int   draw_scale = 1;
@@ -120,6 +121,7 @@ private:
     float maxRho = 1.0;
     int height_plot=0;
     int rotation = 220;
+    int isolineColor = 0;
 };
 
 #endif // VISUALIZATION_H

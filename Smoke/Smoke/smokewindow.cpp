@@ -227,3 +227,8 @@ void SmokeWindow::on_RotateSlider_valueChanged(int value)
     ui->VisualizationWidget->set_rotation(value);
     ui->RotateLabel->setText(QStringLiteral("Rotate: %1 degrees").arg(value));
 }
+
+void SmokeWindow::on_IsolineColorCheckbox_stateChanged(int state)
+{
+    ui->VisualizationWidget->set_isoline_color(state/2);
+}

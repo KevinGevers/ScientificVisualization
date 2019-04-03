@@ -76,6 +76,8 @@ private slots:
 
     void on_RotateSlider_valueChanged(int value);
 
+    void on_IsolineColorCheckbox_stateChanged(int arg1);
+
 private:
     Ui::SmokeWindow *ui;
 };

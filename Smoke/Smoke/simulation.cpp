@@ -173,7 +173,7 @@ float get_length(float x, float y)
 void Simulation::calc_divergence(int mode)
 {
     double *dataX, *dataY;
-    if (mode)
+    if (mode == 1)
     { //based on velocity
         dataX = get_vx();
         dataY = get_vy();
