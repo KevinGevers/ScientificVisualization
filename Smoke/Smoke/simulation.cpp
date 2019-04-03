@@ -182,6 +182,9 @@ void Simulation::calc_divergence(int mode)
         dataY = get_fy();
     }
 
+    divergence_min = std::numeric_limits< float >::max();
+    divergence_max = 0;
+
     int dim = get_dim(), min_idx_x, max_idx_x, min_idx_y, max_idx_y;
     float left, right, above, below, divX, divY;
     for (int i=0; i<dim*dim; i++)
@@ -195,14 +198,14 @@ void Simulation::calc_divergence(int mode)
         below = get_length(dataX[max_idx_y], dataY[max_idx_y]);
         left = get_length(dataX[min_idx_x], dataY[min_idx_x]);
         right = get_length(dataX[max_idx_x], dataY[max_idx_x]);
-//        if (divX+divY > max_divergence)
-//            max_divergence = divX+divY;
-//        if (divX+divY < min_divergence)
-//            min_divergence = divX+divY;
         divX = (left-right);
         divY = (above-below);
-        //qDebug() << (divX+divY);
+
         divergence[i] = (divX+divY) * 5 + 0.5;
+        if (divergence[i] > divergence_max)
+            divergence_max = divergence[i];
+        if (divergence[i] < divergence_min)
+            divergence_min = divergence[i];
     }
     //qDebug() << min_divergence << " " << max_divergence;
 }
@@ -356,4 +359,14 @@ void Simulation::set_dt(double new_dt)
 float Simulation::get_divergence(int idx)
 {
     return divergence[idx];
+}
+
+float Simulation::get_divergence_max()
+{
+    return divergence_max;
+}
+
+float Simulation::get_divergence_min()
+{
+    return divergence_min;
 }

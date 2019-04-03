@@ -74,6 +74,8 @@ private slots:
 
     void on_HeightPlot_stateChanged(int arg1);
 
+    void on_RotateSlider_valueChanged(int value);
+
 private:
     Ui::SmokeWindow *ui;
 };

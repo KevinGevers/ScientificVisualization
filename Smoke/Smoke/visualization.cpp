@@ -89,18 +89,22 @@ float normalize(float val, float min, float max)
 
 float Visualization::get_color_max()
 {
+    if (!scale_colors)
+        return clipping_max;
+    else if (smokeMode)
+        return min(simulation->get_divergence_max(), clipping_max);
     float data_max = simulation->get_rho_maxf();
-    if (scale_colors)
-        return min(data_max, clipping_max);
-    return clipping_max;
+    return min(data_max, clipping_max);
 }
 
 float Visualization::get_color_min()
 {
+    if (!scale_colors)
+        return clipping_min;
+    else if (smokeMode)
+        return max(simulation->get_divergence_min(), clipping_min);
     float data_min = simulation->get_rho_minf();
-    if (scale_colors)
-        return max(data_min, clipping_min);
-    return clipping_min;
+    return max(data_min, clipping_min);
 }
 
 
@@ -454,10 +458,10 @@ void Visualization::paintSmoke(float wn, float hn)
 
             if (height_plot) {
                 glBegin(GL_QUADS);
-                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
-                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
-                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
-                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
+                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0)*10);
+                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1)*10);
+                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2)*10);
+                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3)*10);
             } else {
                 glBegin(GL_TRIANGLES);
                 set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
@@ -525,7 +529,7 @@ void Visualization::visualize()
     float wn, hn;
     if (height_plot) {
         wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1)/5*3;   // Grid cell width
-        hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1)/5*3;  // Grid cell heigh
+        hn = wn;
     } else {
         wn = static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1);   // Grid cell width
         hn = static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1);  // Grid cell heigh
@@ -536,9 +540,6 @@ void Visualization::visualize()
 
     if (draw_vecs)
         paintVectors(wn, hn);
-
-    if (draw_scale && !height_plot)
-        paintLegend(wn, hn);
 
     if (draw_isolines && numberIsolines > 1) {
         float stepsize = (maxRho-minRho)/(numberIsolines+1);
@@ -563,11 +564,26 @@ void Visualization::paintGL()
     glLoadIdentity();
 
     if (height_plot) {
-        glOrtho(width()/5*-1, width()/10*7, height()/5*-1, height()/10*7, -50, 50);
-        glRotatef(325.0, 1.0, 0.0, 0.0);
-        glRotatef(10.0, 0.0, 1.0, 0.0);
-        glRotatef(325.0, 0.0, 0.0, 1.0);
+        qreal ratio = width() / static_cast<qreal>(height());
+        if (height() > width())
+            ratio = height() / static_cast<qreal>(width());
+
+        glPushMatrix();
+
+        if (scalar_col==COLOR_WHITETORED)
+            glClearColor(0.0,0.0,0.0,0.0);
+        else
+            glClearColor(1.0,1.0,1.0,0.0);
+
+        glOrtho(-ratio*width()/2, ratio*width()/2, ratio*height()/2, -ratio*height()/2, -100000, 100000);
+
+        glRotatef(rotation, 0.0, 1.0, 0.0);
+        glPushMatrix();
+        glTranslatef(-0.5f*width(), 0.0, 0.0);
+        glPushMatrix();
+        glRotatef(315.0, 0.0, 0.0, 1.0);
     } else {
+        glClearColor(0.0,0.0,0.0,0.0);
         glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
     }
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -579,6 +595,19 @@ void Visualization::paintGL()
     glEnable(GL_NORMALIZE);
 
     visualize();
+
+    if (height_plot) {
+        glPopMatrix();
+        glPopMatrix();
+        glPopMatrix();
+    }
+
+    if (draw_scale) {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, static_cast<GLdouble>(width()), 0.0, static_cast<GLdouble>(height()), -50, 50);
+        paintLegend(static_cast<float>(width()) / static_cast<float>(simulation->get_dim() + 1), static_cast<float>(height()) / static_cast<float>(simulation->get_dim() + 1));
+    }
     glFlush();
 
 }
@@ -724,4 +753,9 @@ void Visualization::set_max_rho(int value)
 void Visualization::set_heightplot(int state)
 {
     height_plot = state;
+}
+
+void Visualization::set_rotation(int value)
+{
+    rotation = value;
 }

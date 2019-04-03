@@ -47,11 +47,13 @@ public:
     float get_fxf(int idx);
     float get_fyf(int idx);
     float get_divergence(int idx);
+    float get_divergence_max();
+    float get_divergence_min();
 
 private:
     int dim;
-    float max_divergence = 0;
-    float min_divergence = 0;
+    float divergence_max = 0;
+    float divergence_min = 0;
 
     //--- SIMULATION PARAMETERS ------------------------------------------------------------------------
     double dt = 0.4;				//simulation time step

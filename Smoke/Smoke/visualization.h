@@ -57,6 +57,7 @@ public:
     void set_min_rho(int value);
     void set_max_rho(int value);
     void set_heightplot(int state);
+    void set_rotation(int value);
 
     float get_color_max();
     float get_color_min();
@@ -118,6 +119,7 @@ private:
     float minRho = 0.0;
     float maxRho = 1.0;
     int height_plot=0;
+    int rotation = 220;
 };
 
 #endif // VISUALIZATION_H
