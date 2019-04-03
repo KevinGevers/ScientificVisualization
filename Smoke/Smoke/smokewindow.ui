@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>940</width>
-    <height>628</height>
+    <height>678</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -199,12 +199,18 @@
                     <property name="text">
                      <string>Jitter</string>
                     </property>
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
                    </widget>
                   </item>
                   <item row="0" column="1">
                    <widget class="QCheckBox" name="vectorColor">
                     <property name="text">
                      <string>Colour</string>
+                    </property>
+                    <property name="checked">
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -284,37 +290,6 @@
                   <item>
                    <property name="text">
                     <string>Force</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="ColorBasedOnLabel">
-                  <property name="text">
-                   <string>Color based on</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="ColorBasedOn">
-                  <item>
-                   <property name="text">
-                    <string>None</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Density</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Fluid velocity magnitude</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>Forcefield magnitude</string>
                    </property>
                   </item>
                  </widget>
@@ -636,67 +611,59 @@
            </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="ClippingLabelBox">
-            <item>
-             <widget class="QLabel" name="MinClippingLabel">
-              <property name="text">
-               <string>Min Clipping: 0.0</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="MaxClippingLabel">
-              <property name="text">
-               <string>Max Clipping: 1.0</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QLabel" name="MinClippingLabel">
+            <property name="text">
+             <string>Min Clipping: 0.0</string>
+            </property>
+           </widget>
           </item>
           <item>
-           <layout class="QHBoxLayout" name="ClippingSliderBox">
-            <item>
-             <widget class="QSlider" name="ClippingMin">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximum">
-               <number>1000</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSlider" name="ClippingMax">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximum">
-               <number>1000</number>
-              </property>
-              <property name="value">
-               <number>100</number>
-              </property>
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="invertedAppearance">
-               <bool>false</bool>
-              </property>
-              <property name="tickPosition">
-               <enum>QSlider::NoTicks</enum>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           <widget class="QSlider" name="ClippingMin">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="MaxClippingLabel">
+            <property name="text">
+             <string>Max Clipping: 1.0</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSlider" name="ClippingMax">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>100</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="invertedAppearance">
+             <bool>false</bool>
+            </property>
+            <property name="tickPosition">
+             <enum>QSlider::NoTicks</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -726,11 +693,22 @@
            <number>9</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="Isoline">
-            <property name="text">
-             <string>Show</string>
-            </property>
-           </widget>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QCheckBox" name="Isoline">
+              <property name="text">
+               <string>Show</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="IsolineColorCheckbox">
+              <property name="text">
+               <string>Color</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item>
            <widget class="QLabel" name="ThresholdLabel">

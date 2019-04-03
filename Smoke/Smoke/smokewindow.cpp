@@ -108,7 +108,7 @@ void SmokeWindow::on_ClippingMin_valueChanged(int value)
 {
     // Range between 0 and 10
     ui->VisualizationWidget->set_clipping_min(value / 100.0f);
-    ui->MinClippingLabel->setText(QStringLiteral("Min clipping: %f").arg(value / 100.0f));
+    ui->MinClippingLabel->setText(QStringLiteral("Min clipping: %1").arg(value / 100.0f));
 
 }
 
@@ -220,4 +220,9 @@ void SmokeWindow::on_MaxRhoSlider_valueChanged(int value)
 void SmokeWindow::on_HeightPlot_stateChanged(int state)
 {
     ui->VisualizationWidget->set_heightplot(state/2);
+}
+
+void SmokeWindow::on_IsolineColorCheckbox_stateChanged(int state)
+{
+    ui->VisualizationWidget->set_isoline_color(state/2);
 }

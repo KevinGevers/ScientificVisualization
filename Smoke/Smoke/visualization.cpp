@@ -402,7 +402,12 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                 case 15: break;
             }
             glLineWidth(1.0);
-            set_scaled_colormap(threshold);
+            if (isolineColor)
+            {
+                set_scaled_colormap(threshold);
+            } else {
+                glColor3f(256,256,256);
+            }
             glVertex2f(x1, y1);
             glVertex2f(x2, y2);
 
@@ -453,11 +458,11 @@ void Visualization::paintSmoke(float wn, float hn)
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
             if (height_plot) {
-                glBegin(GL_QUADS);
-                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
-                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
-                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
-                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
+//                glBegin(GL_QUADS);
+//                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0));
+//                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1));
+//                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2));
+//                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3));
             } else {
                 glBegin(GL_TRIANGLES);
                 set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
@@ -537,9 +542,6 @@ void Visualization::visualize()
     if (draw_vecs)
         paintVectors(wn, hn);
 
-    if (draw_scale && !height_plot)
-        paintLegend(wn, hn);
-
     if (draw_isolines && numberIsolines > 1) {
         float stepsize = (maxRho-minRho)/(numberIsolines+1);
         for(int i=1; i<=numberIsolines; i++) {
@@ -548,6 +550,9 @@ void Visualization::visualize()
     } else if(draw_isolines) {
         paintIsolines(threshold, wn, hn);
     }
+
+    if (draw_scale)
+        paintLegend(wn, hn);
 }
 
 
@@ -724,4 +729,9 @@ void Visualization::set_max_rho(int value)
 void Visualization::set_heightplot(int state)
 {
     height_plot = state;
+}
+
+void Visualization::set_isoline_color(int state)
+{
+    isolineColor = state;
 }
