@@ -232,3 +232,9 @@ void SmokeWindow::on_IsolineColorCheckbox_stateChanged(int state)
 {
     ui->VisualizationWidget->set_isoline_color(state/2);
 }
+
+void SmokeWindow::on_HeightPlotScaleSlider_valueChanged(int value)
+{
+    ui->VisualizationWidget->set_heightplot_scale(value);
+    ui->HeightPlotScaleLabel->setText(QStringLiteral("Scale: %1").arg(value));
+}

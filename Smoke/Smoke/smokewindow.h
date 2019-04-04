@@ -78,6 +78,8 @@ private slots:
 
     void on_IsolineColorCheckbox_stateChanged(int arg1);
 
+    void on_HeightPlotScaleSlider_valueChanged(int value);
+
 private:
     Ui::SmokeWindow *ui;
 };

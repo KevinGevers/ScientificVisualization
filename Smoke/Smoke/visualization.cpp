@@ -438,6 +438,11 @@ void Visualization::paintSmoke(float wn, float hn)
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
+    if (height_plot)
+        glBegin(GL_QUADS);
+    else
+        glBegin(GL_TRIANGLES);
+
     for (int j = 0; j < simulation->get_dim() - 1; j++)            //draw smoke
     {
         for (int i = 0; i < simulation->get_dim() - 1; i++)
@@ -462,13 +467,11 @@ void Visualization::paintSmoke(float wn, float hn)
             idx3 = (j * simulation->get_dim()) + (i + 1);
 
             if (height_plot) {
-                glBegin(GL_QUADS);
-                set_colormap(simulation->get_rhof(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0)*10);
-                set_colormap(simulation->get_rhof(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1)*10);
-                set_colormap(simulation->get_rhof(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2)*10);
-                set_colormap(simulation->get_rhof(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3)*10);
+                set_colormap(get_scalar(idx0));    glVertex3f(px0, py0, simulation->get_rhof(idx0)*height_plot_scale);
+                set_colormap(get_scalar(idx1));    glVertex3f(px1, py1, simulation->get_rhof(idx1)*height_plot_scale);
+                set_colormap(get_scalar(idx2));    glVertex3f(px2, py2, simulation->get_rhof(idx2)*height_plot_scale);
+                set_colormap(get_scalar(idx3));    glVertex3f(px3, py3, simulation->get_rhof(idx3)*height_plot_scale);
             } else {
-                glBegin(GL_TRIANGLES);
                 set_colormap(get_scalar(idx0));    glVertex2f(px0, py0);
                 set_colormap(get_scalar(idx1));    glVertex2f(px1, py1);
                 set_colormap(get_scalar(idx2));    glVertex2f(px2, py2);
@@ -758,6 +761,11 @@ void Visualization::set_max_rho(int value)
 void Visualization::set_heightplot(int state)
 {
     height_plot = state;
+}
+
+void Visualization::set_heightplot_scale(int value)
+{
+    height_plot_scale = value;
 }
 
 void Visualization::set_rotation(int value)

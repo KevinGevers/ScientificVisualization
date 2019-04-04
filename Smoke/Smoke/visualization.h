@@ -57,6 +57,7 @@ public:
     void set_min_rho(int value);
     void set_max_rho(int value);
     void set_heightplot(int state);
+    void set_heightplot_scale(int value);
     void set_rotation(int value);
     void set_isoline_color(int state);
 
@@ -120,7 +121,8 @@ private:
     float minRho = 0.0;
     float maxRho = 1.0;
     int height_plot=0;
-    int rotation = 220;
+    int height_plot_scale = 50;
+    int rotation = 140;
     int isolineColor = 0;
 };
 
