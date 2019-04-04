@@ -86,8 +86,8 @@ protected:
     void paintIsolines(float threshold, float wn, float hn);
 private:
     Simulation* simulation;
-    Cone cone = Cone(6, 1/3.0f);
-    Cylinder cylinder = Cylinder(6, 1/3.0f);
+    Cone cone = Cone(8, 1/3.0f);
+    Cylinder cylinder = Cylinder(8, 1/3.0f);
     float hue = 0.0;
     float saturation = 1.0;
     int nlevels = 256;

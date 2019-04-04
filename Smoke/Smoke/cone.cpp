@@ -18,6 +18,8 @@ void Cone::generate()
 {
     QVector3D top = QVector3D(0,0,1);
 
+    QQuaternion rotation = QQuaternion::fromAxisAndAngle(0,0,1,45);
+
     QVector<QVector3D> circle;
     float t = 2 * static_cast<float>(M_PI) / static_cast<float>(sections);
     for (int i = 0; i < sections; i++) {
@@ -28,7 +30,7 @@ void Cone::generate()
     for (int i = 1; i <= sections; ++i) {
         QVector3D norm = QVector3D::crossProduct(circle[i%sections] - top, circle[i-1] - circle[i%sections]);
         norm.normalize();
-        face_normals.push_back(norm);
+        face_normals.push_back(rotation * norm);
     }
 
     for (int i = 1; i <= sections; ++i) {
