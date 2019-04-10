@@ -126,6 +126,7 @@ private:
     int height_plot_scale = 50;
     int rotation = 0;
     int isolineColor = 0;
+    float calcOffset(float threshold, float value1, float value2);
 };
 
 #endif // VISUALIZATION_H

@@ -303,6 +303,15 @@ void Visualization::paintVectors(float wn, float hn)
     }
 }
 
+float Visualization::calcOffset(float threshold, float value1, float value2)
+{
+    float totalDiff, pointDiff;
+    totalDiff = abs(value1-value2);
+    pointDiff = abs(threshold-value1);
+    qDebug() << pointDiff/totalDiff << " point diff " << pointDiff << " total diff " << totalDiff << " value1 " << value1 << " value2 " << value2;
+    return pointDiff/totalDiff;
+}
+
 void Visualization::paintIsolines(float threshold, float wn, float hn)
 {
     int dim = simulation->get_dim();
@@ -311,14 +320,14 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
     float x1, x2, y1, y2;
 
     glBegin(GL_LINES);
-    for(int i=1; i<dim+1; i++) {
-        for(int j=1; j<dim+1; j++) {
+    for(int i=0; i<dim+1; i++) {
+        for(int j=0; j<dim+1; j++) {
             marchingsq.reset();
 
-            point1 = simulation->get_rhof((j-1) * dim + i-1);
-            point2 = simulation->get_rhof((j-1) * dim + i);
-            point3 = simulation->get_rhof(j * dim + i);
-            point4 = simulation->get_rhof(j * dim + i-1);
+            point1 = simulation->get_rhof(j * dim + i);
+            point2 = simulation->get_rhof(j * dim + i+1);
+            point3 = simulation->get_rhof((j+1) * dim + i+1);
+            point4 = simulation->get_rhof((j+1) * dim + i);
 
             if(point1>threshold) marchingsq.flip(3);
             if(point2>threshold) marchingsq.flip(2);
@@ -328,90 +337,104 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
             switch(marchingsq.to_ulong()) {
                 case 0: break;
                 case 1: x1 =  i*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = (j+1)*hn;
+                        y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                        x2 = (i+calcOffset(threshold, point1, point2))*wn;
+                        y2 = j*hn;
+                        qDebug() << "case1";
                 break;
-                case 2: x1 = (i+1)*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = (j+1)*hn;
+                case 2: x1 = (i+calcOffset(threshold, point1, point2))*wn;
+                        y1 = j*hn;
+                        x2 = (i+1)*wn;
+                        y2 = (j+calcOffset(threshold, point2, point3))*hn;
+                        qDebug() << "case2";
                 break;
                 case 3: x1 =  i*wn;
-                        y1 = (j+0.5)*hn;
+                        y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+1)*wn;
-                        y2 = (j+0.5)*hn;
+                        y2 = (j+calcOffset(threshold, point2, point3))*hn;
+                        qDebug() << "case3";
                 break;
                 case 4: x1 = (i+1)*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = j*hn;
+                        y1 = (j+calcOffset(threshold, point2, point3))*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
+                        y2 = (j+1)*hn;
+                        qDebug() << "case4";
                 break;
                 case 5: //has 2 cases, so draw both
-                        x1 = (i+1)*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = (j+1)*hn;
-                        glVertex2f(x1-1, y1-1);
-                        glVertex2f(x2-1, y2-1);
-
-                        x1 = i*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
+                        x1 =  i*wn;
+                        y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                        x2 = (i+calcOffset(threshold, point1, point2))*wn;
                         y2 = j*hn;
-                break;
-                case 6: x1 = (i+0.5)*wn;
-                        y1 = j*hn;
-                        x2 = (i+0.5)*wn;
+                        glVertex2f(x1, y1);
+                        glVertex2f(x2, y2);
+
+                        x1 = (i+1)*wn;
+                        y1 = (j+calcOffset(threshold, point2, point3))*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
+                        qDebug() << "case5";
+                break;
+                case 6: x1 = (i+calcOffset(threshold, point1, point2))*wn;
+                        y1 = j*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
+                        y2 = (j+1)*hn;
+                        qDebug() << "case6";
                 break;
                 case 7: x1 = i*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = j*hn;
+                        y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
+                        y2 = (j+1)*hn;
+                        qDebug() << "case7";
                 break;
                 case 8: x1 = i*wn;
-                        y1 = (j+0.5)*hn;
-                        x2 = (i+0.5)*wn;
-                        y2 = j*hn;
-                break;
-                case 9: x1 = (i+0.5)*wn;
-                        y1 = j*hn;
-                        x2 = (i+0.5)*wn;
+                        y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
+                        qDebug() << "case8";
+                break;
+                case 9: x1 = (i+calcOffset(threshold, point1, point2))*wn;
+                        y1 = j*hn;
+                        x2 = (i+calcOffset(threshold, point4, point3))*wn;
+                        y2 = (j+1)*hn;
+                        qDebug() << "case9";
                 break;
                 case 10: //has 2 cases, so draw both
-                         x1 = (i+1)*wn;
-                         y1 = (j+0.5)*hn;
-                         x2 = (i+0.5)*wn;
-                         y2 = (j)*hn;
-                         glVertex2f(x1-1, y1-1);
-                         glVertex2f(x2-1, y2-1);
-
                          x1 = i*wn;
-                         y1 = (j+0.5)*hn;
-                         x2 = (i+0.5)*wn;
+                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                          y2 = (j+1)*hn;
+                         glVertex2f(x1, y1);
+                         glVertex2f(x2, y2);
+
+                         x1 = (i+calcOffset(threshold, point1, point2))*wn;
+                         y1 = j*hn;
+                         x2 = (i+1)*wn;
+                         y2 = (j+calcOffset(threshold, point2, point3))*hn;
+                         qDebug() << "case10";
                 break;
                 case 11: x1 = (i+1)*wn;
-                         y1 = (j+0.5)*hn;
-                         x2 = (i+0.5)*wn;
-                         y2 = j*hn;
+                         y1 = (j+calcOffset(threshold, point2, point3))*hn;
+                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
+                         y2 = (j+1)*hn;
+                         qDebug() << "case11";
                 break;
-                case 12: x1 = i*wn;
-                         y1 = (j+0.5)*hn;
+                case 12: x1 =  i*wn;
+                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                          x2 = (i+1)*wn;
-                         y2 = (j+0.5)*hn;
+                         y2 = (j+calcOffset(threshold, point2, point3))*hn;
+                         qDebug() << "case12";
                 break;
-                case 13: x1 = (i+1)*wn;
-                         y1 = (j+0.5)*hn;
-                         x2 = (i+0.5)*wn;
-                         y2 = (j+1)*hn;
+                case 13: x1 = (i+calcOffset(threshold, point1, point2))*wn;
+                         y1 = j*hn;
+                         x2 = (i+1)*wn;
+                         y2 = (j+calcOffset(threshold, point2, point3))*hn;
+                         qDebug() << "case13";
                 break;
-                case 14: x1 = i*wn;
-                         y1 = (j+0.5)*hn;
-                         x2 = (i+0.5)*wn;
-                         y2 = (j+1)*hn;
+                case 14: x1 =  i*wn;
+                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
+                         x2 = (i+calcOffset(threshold, point1, point2))*wn;
+                         y2 = j*hn;
+                         qDebug() << "case14";
                 break;
                 case 15: break;
             }
