@@ -17,6 +17,8 @@ class Visualization : public QOpenGLWidget
     Q_OBJECT
 public:
     explicit Visualization(QWidget *parent = nullptr);
+    void reset_simulation();
+    void reset();
     void rainbow(float value,float* R,float* G,float* B);
     void set_colormap(float vy);
     void direction_to_color(float x, float y);
@@ -104,7 +106,7 @@ private:
     float vec_scale = 1000;			//scaling of hedgehogs
     int   vec_jitter = 1;
     int   draw_smoke = 1;           //draw the smoke or not
-    int   draw_vecs = 0;            //draw the vector field or not
+    int   draw_vecs = 1;            //draw the vector field or not
     int   draw_scale = 1;
     int   draw_isolines = 0;
     const int COLOR_BLACKWHITE=0;   //different types of color mapping: black-and-white, rainbow, banded
@@ -122,7 +124,7 @@ private:
     float maxRho = 1.0;
     int height_plot=0;
     int height_plot_scale = 50;
-    int rotation = 140;
+    int rotation = 0;
     int isolineColor = 0;
     float calcOffset(float threshold, float value1, float value2);
 };

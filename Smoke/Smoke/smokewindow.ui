@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>821</width>
-    <height>678</height>
+    <width>995</width>
+    <height>733</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -190,7 +190,7 @@
                      <string>Show</string>
                     </property>
                     <property name="checked">
-                     <bool>false</bool>
+                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -391,7 +391,7 @@
                 <item>
                  <widget class="QLabel" name="RotateLabel">
                   <property name="text">
-                   <string>Rotate: 140 degrees</string>
+                   <string>Rotate: 0 degrees</string>
                   </property>
                  </widget>
                 </item>
@@ -407,7 +407,7 @@
                    <number>359</number>
                   </property>
                   <property name="value">
-                   <number>140</number>
+                   <number>0</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -926,8 +926,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>821</width>
-     <height>17</height>
+     <width>995</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -935,12 +935,14 @@
      <string>File</string>
     </property>
     <addaction name="actionSave"/>
+    <addaction name="actionReset_visualization"/>
    </widget>
    <widget class="QMenu" name="menuSimulation">
     <property name="title">
      <string>Simulation</string>
     </property>
     <addaction name="actionPauze"/>
+    <addaction name="actionReset_simulation"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSimulation"/>
@@ -983,6 +985,16 @@
    </property>
    <property name="text">
     <string>Show Smoke</string>
+   </property>
+  </action>
+  <action name="actionReset_simulation">
+   <property name="text">
+    <string>Reset simulation</string>
+   </property>
+  </action>
+  <action name="actionReset_visualization">
+   <property name="text">
+    <string>Reset visualization</string>
    </property>
   </action>
  </widget>

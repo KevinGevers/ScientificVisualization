@@ -23,6 +23,16 @@ Visualization::Visualization(QWidget *parent) : QOpenGLWidget(parent)
     QObject::connect(timer,SIGNAL(timeout()),this,SLOT(do_one_simulation_step()));
 }
 
+void Visualization::reset_simulation()
+{
+    simulation->init_simulation();
+}
+
+void Visualization::reset()
+{
+
+}
+
 
 void Visualization::do_one_simulation_step()
 {
@@ -599,6 +609,7 @@ void Visualization::paintGL()
         glPushMatrix();
         glTranslatef(-0.5f*width(), 0.0, 0.0);
         glPushMatrix();
+        glRotatef(45.0, 1.0, 0.0, 0.0);
         glRotatef(315.0, 0.0, 0.0, 1.0);
     } else {
         glClearColor(0.0,0.0,0.0,0.0);
