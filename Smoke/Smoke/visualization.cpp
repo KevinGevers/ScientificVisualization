@@ -28,11 +28,6 @@ void Visualization::reset_simulation()
     simulation->init_simulation();
 }
 
-void Visualization::reset()
-{
-
-}
-
 
 void Visualization::do_one_simulation_step()
 {
@@ -794,4 +789,9 @@ void Visualization::set_rotation(int value)
 void Visualization::set_isoline_color(int state)
 {
     isolineColor = state;
+}
+
+void Visualization::set_draw_scale(int state)
+{
+    draw_scale = state;
 }

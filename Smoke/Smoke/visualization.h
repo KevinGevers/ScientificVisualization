@@ -62,6 +62,7 @@ public:
     void set_heightplot_scale(int value);
     void set_rotation(int value);
     void set_isoline_color(int state);
+    void set_draw_scale(int state);
 
     float get_color_max();
     float get_color_min();
