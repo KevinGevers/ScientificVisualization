@@ -274,8 +274,6 @@ void Visualization::paintVectors(float wn, float hn)
     QVector2D data;
     int dim = simulation->get_dim();
     srand(jitter_seed);
-    // This draws a glyph for every raster point in the set dimension (standard is 50)
-    // We will need to alter this so it's adjustable
     for (int i = 0; i < glyphXAmount; i++)
     {
         for (int j = 0; j < glyphYAmount; j++)
@@ -407,8 +405,7 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                          y2 = (j+1)*hn;
 
                 break;
-                case 12: /*qDebug() << "case12";*/
-                         x1 =  i*wn;
+                case 12: x1 =  i*wn;
                          y1 = (j+calcOffset(threshold, point1, point4))*hn;
                          x2 = (i+1)*wn;
                          y2 = (j+calcOffset(threshold, point2, point3))*hn;
