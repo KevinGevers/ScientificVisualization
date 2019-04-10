@@ -298,7 +298,6 @@ float Visualization::calcOffset(float threshold, float value1, float value2)
     float totalDiff, pointDiff;
     totalDiff = abs(value1-value2);
     pointDiff = abs(threshold-value1);
-    qDebug() << pointDiff/totalDiff << " point diff " << pointDiff << " total diff " << totalDiff << " value1 " << value1 << " value2 " << value2;
     return pointDiff/totalDiff;
 }
 
@@ -319,10 +318,10 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
             point3 = simulation->get_rhof((j+1) * dim + i+1);
             point4 = simulation->get_rhof((j+1) * dim + i);
 
-            if(point1>threshold) marchingsq.flip(3);
-            if(point2>threshold) marchingsq.flip(2);
-            if(point3>threshold) marchingsq.flip(1);
-            if(point4>threshold) marchingsq.flip(0);
+            if(point1>threshold) marchingsq.flip(0);
+            if(point2>threshold) marchingsq.flip(1);
+            if(point3>threshold) marchingsq.flip(2);
+            if(point4>threshold) marchingsq.flip(3);
 
             switch(marchingsq.to_ulong()) {
                 case 0: break;
@@ -330,25 +329,21 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+calcOffset(threshold, point1, point2))*wn;
                         y2 = j*hn;
-                        qDebug() << "case1";
                 break;
                 case 2: x1 = (i+calcOffset(threshold, point1, point2))*wn;
                         y1 = j*hn;
                         x2 = (i+1)*wn;
                         y2 = (j+calcOffset(threshold, point2, point3))*hn;
-                        qDebug() << "case2";
                 break;
                 case 3: x1 =  i*wn;
                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+1)*wn;
                         y2 = (j+calcOffset(threshold, point2, point3))*hn;
-                        qDebug() << "case3";
                 break;
                 case 4: x1 = (i+1)*wn;
                         y1 = (j+calcOffset(threshold, point2, point3))*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case4";
                 break;
                 case 5: //has 2 cases, so draw both
                         x1 =  i*wn;
@@ -362,31 +357,26 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                         y1 = (j+calcOffset(threshold, point2, point3))*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case5";
                 break;
                 case 6: x1 = (i+calcOffset(threshold, point1, point2))*wn;
                         y1 = j*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case6";
                 break;
                 case 7: x1 = i*wn;
                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case7";
                 break;
                 case 8: x1 = i*wn;
                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case8";
                 break;
                 case 9: x1 = (i+calcOffset(threshold, point1, point2))*wn;
                         y1 = j*hn;
                         x2 = (i+calcOffset(threshold, point4, point3))*wn;
                         y2 = (j+1)*hn;
-                        qDebug() << "case9";
                 break;
                 case 10: //has 2 cases, so draw both
                          x1 = i*wn;
@@ -400,31 +390,29 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                          y1 = j*hn;
                          x2 = (i+1)*wn;
                          y2 = (j+calcOffset(threshold, point2, point3))*hn;
-                         qDebug() << "case10";
                 break;
                 case 11: x1 = (i+1)*wn;
                          y1 = (j+calcOffset(threshold, point2, point3))*hn;
                          x2 = (i+calcOffset(threshold, point4, point3))*wn;
                          y2 = (j+1)*hn;
-                         qDebug() << "case11";
+
                 break;
-                case 12: x1 =  i*wn;
+                case 12: /*qDebug() << "case12";*/
+                         x1 =  i*wn;
                          y1 = (j+calcOffset(threshold, point1, point4))*hn;
                          x2 = (i+1)*wn;
                          y2 = (j+calcOffset(threshold, point2, point3))*hn;
-                         qDebug() << "case12";
+
                 break;
                 case 13: x1 = (i+calcOffset(threshold, point1, point2))*wn;
                          y1 = j*hn;
                          x2 = (i+1)*wn;
                          y2 = (j+calcOffset(threshold, point2, point3))*hn;
-                         qDebug() << "case13";
                 break;
                 case 14: x1 =  i*wn;
                          y1 = (j+calcOffset(threshold, point1, point4))*hn;
                          x2 = (i+calcOffset(threshold, point1, point2))*wn;
                          y2 = j*hn;
-                         qDebug() << "case14";
                 break;
                 case 15: break;
             }
@@ -446,7 +434,6 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
 float Visualization:: get_scalar(int idx){
     if (smokeMode)
     { // divergence
-        // the results here are not completely correct due to scaling and clipping!
         return simulation->get_divergence(idx);
     } else { // density
         return simulation->get_rhof(idx);
