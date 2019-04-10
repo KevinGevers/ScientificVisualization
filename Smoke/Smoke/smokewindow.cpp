@@ -11,7 +11,8 @@ SmokeWindow::SmokeWindow(QWidget *parent) :
     connect(ui->actionSave, &QAction::triggered, this, &SmokeWindow::actionSave);
     connect(ui->actionPauze, &QAction::triggered, this, &SmokeWindow::actionPauze);
     connect(ui->actionReset_simulation, &QAction::triggered, this, &SmokeWindow::actionResetSimulation);
-    connect(ui->actionReset_visualization, &QAction::triggered, this, &SmokeWindow::actionResetVisualization);
+    connect(ui->actionReset_settings, &QAction::triggered, this, &SmokeWindow::actionResetSettings);
+    connect(ui->actionDraw_legend, &QAction::triggered, this, &SmokeWindow::actionDrawLegend);
 }
 
 SmokeWindow::~SmokeWindow()
@@ -83,7 +84,7 @@ void SmokeWindow::actionResetSimulation()
     ui->VisualizationWidget->reset_simulation();
 }
 
-void SmokeWindow::actionResetVisualization()
+void SmokeWindow::actionResetSettings()
 {
     // Reset simulation settings
     ui->timestepSlider->setValue(399);
@@ -122,6 +123,11 @@ void SmokeWindow::actionResetVisualization()
     ui->NumberIsolinesSlider->setValue(1);
     ui->MinRhoSlider->setValue(0);
     ui->MaxRhoSlider->setValue(1);
+}
+
+void SmokeWindow::actionDrawLegend()
+{
+    ui->VisualizationWidget->set_draw_scale(ui->actionDraw_legend->isChecked());
 }
 
 void SmokeWindow::on_NumberColors_valueChanged(int value)

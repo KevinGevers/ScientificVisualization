@@ -36,7 +36,9 @@ private slots:
 
     void actionResetSimulation();
 
-    void actionResetVisualization();
+    void actionResetSettings();
+
+    void actionDrawLegend();
 
     void on_NumberColors_valueChanged(int value);
 
