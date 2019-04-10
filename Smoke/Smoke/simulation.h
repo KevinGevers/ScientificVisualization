@@ -7,7 +7,7 @@ class Simulation
 {
 public:
     Simulation(int n);
-    void init_simulation(int n);
+    void init_simulation();
     void FFT(int direction,void* vx);
     int clamp(float x);
     float max(float x, float y);

@@ -10,6 +10,8 @@ SmokeWindow::SmokeWindow(QWidget *parent) :
     ui->setupUi(this);
     connect(ui->actionSave, &QAction::triggered, this, &SmokeWindow::actionSave);
     connect(ui->actionPauze, &QAction::triggered, this, &SmokeWindow::actionPauze);
+    connect(ui->actionReset_simulation, &QAction::triggered, this, &SmokeWindow::actionResetSimulation);
+    connect(ui->actionReset_visualization, &QAction::triggered, this, &SmokeWindow::actionResetVisualization);
 }
 
 SmokeWindow::~SmokeWindow()
@@ -74,6 +76,52 @@ void SmokeWindow::actionSave()
         img.save(file);
         actionPauze();
     }
+}
+
+void SmokeWindow::actionResetSimulation()
+{
+    ui->VisualizationWidget->reset_simulation();
+}
+
+void SmokeWindow::actionResetVisualization()
+{
+    // Reset simulation settings
+    ui->timestepSlider->setValue(399);
+    ui->viscositySlider->setValue(0);
+
+    // Reset glyphs
+    ui->showVectors->setChecked(true);
+    ui->vectorColor->setChecked(true);
+    ui->jitterVectors->setChecked(true);
+    ui->vectorScale->setValue(1000);
+    ui->Shape->setCurrentText("Hedgehogs");
+    ui->VectorField->setCurrentText("Velocity");
+    ui->GlyphXSampler->setValue(50);
+    ui->GlyphYSampler->setValue(50);
+
+    // Reset height plot
+    ui->HeightPlot->setChecked(false);
+    ui->RotateSlider->setValue(0);
+    ui->HeightPlotScaleSlider->setValue(50);
+
+    // Reset smoke
+    ui->showSmoke->setChecked(true);
+    ui->SmokeMode->setCurrentText("Density");
+    ui->smokeColor->setCurrentText("Greyscale");
+    ui->NumberColors->setValue(256);
+    ui->Saturation->setValue(1000);
+    ui->Hue->setValue(0);
+    ui->colorScaling->setChecked(true);
+    ui->ClippingMax->setValue(100);
+    ui->ClippingMin->setValue(0);
+
+    // Reset isolines
+    ui->Isoline->setChecked(false);
+    ui->IsolineColorCheckbox->setChecked(false);
+    ui->ThresholdSlider->setValue(0);
+    ui->NumberIsolinesSlider->setValue(1);
+    ui->MinRhoSlider->setValue(0);
+    ui->MaxRhoSlider->setValue(1);
 }
 
 void SmokeWindow::on_NumberColors_valueChanged(int value)

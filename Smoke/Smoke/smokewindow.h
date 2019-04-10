@@ -34,6 +34,10 @@ private slots:
 
     void actionSave();
 
+    void actionResetSimulation();
+
+    void actionResetVisualization();
+
     void on_NumberColors_valueChanged(int value);
 
     void on_Saturation_valueChanged(int value);
