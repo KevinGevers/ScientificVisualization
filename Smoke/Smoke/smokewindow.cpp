@@ -244,8 +244,8 @@ void SmokeWindow::on_Isoline_stateChanged(int state)
 
 void SmokeWindow::on_ThresholdSlider_valueChanged(int value)
 {
-    ui->VisualizationWidget->set_threshold(value);
-    ui->ThresholdLabel->setText(QStringLiteral("Threshold: %1").arg(value));
+    ui->VisualizationWidget->set_threshold(value / 100.0f);
+    ui->ThresholdLabel->setText(QStringLiteral("Threshold: %1").arg(value / 100.0f));
 }
 
 void SmokeWindow::on_NumberIsolinesSlider_valueChanged(int value)

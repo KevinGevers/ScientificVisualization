@@ -1,5 +1,6 @@
 Smoke_Old/
 Smoke/build-Smoke-Desktop_Qt_5_8_0_MinGW_32bit-Debug/
 Smoke/build-Smoke-Desktop_Qt_5_7_1_GCC_64bit-Debug/
-*.pro.user
+Smoke/build-Smoke-Desktop-Debug/
+*.pro.user*
 Smoke/FFTW/

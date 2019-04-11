@@ -231,8 +231,10 @@ void Simulation::drag(int mx, int my, int winWidth, int winHeight)
 
     X = xi; Y = yi;
 
-    if (X > (dim - 1))  X = dim - 1; if (Y > (dim - 1))  Y = dim - 1;
-    if (X < 0) X = 0; if (Y < 0) Y = 0;
+    if (X > (dim - 1))  X = dim - 1;
+    if (Y > (dim - 1))  Y = dim - 1;
+    if (X < 0) X = 0;
+    if (Y < 0) Y = 0;
 
     // Add force at the cursor location
     my = winHeight - my;

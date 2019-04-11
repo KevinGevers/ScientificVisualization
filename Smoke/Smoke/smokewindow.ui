@@ -779,13 +779,13 @@
                 <item>
                  <widget class="QSlider" name="ThresholdSlider">
                   <property name="maximum">
-                   <number>10</number>
+                   <number>1000</number>
                   </property>
                   <property name="singleStep">
                    <number>1</number>
                   </property>
                   <property name="pageStep">
-                   <number>1</number>
+                   <number>10</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
