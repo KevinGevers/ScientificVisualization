@@ -122,7 +122,7 @@ void SmokeWindow::actionResetSettings()
     ui->ThresholdSlider->setValue(0);
     ui->NumberIsolinesSlider->setValue(1);
     ui->MinRhoSlider->setValue(0);
-    ui->MaxRhoSlider->setValue(1);
+    ui->MaxRhoSlider->setValue(100);
 }
 
 void SmokeWindow::actionDrawLegend()
