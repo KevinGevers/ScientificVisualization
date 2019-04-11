@@ -161,7 +161,7 @@ void SmokeWindow::on_ClippingMin_valueChanged(int value)
 {
     // Range between 0 and 10
     ui->VisualizationWidget->set_clipping_min(value / 100.0f);
-    ui->MinClippingLabel->setText(QStringLiteral("Min clipping: %1").arg(value / 100.0f));
+    ui->MinClippingLabel->setText(QStringLiteral("Min clamping: %1").arg(value / 100.0f));
     if (value > ui->ClippingMax->value()) ui->ClippingMax->setValue(value);
 }
 
@@ -169,7 +169,7 @@ void SmokeWindow::on_ClippingMax_valueChanged(int value)
 {
     // Range between 0 and 10
     ui->VisualizationWidget->set_clipping_max(value / 100.0f);
-    ui->MaxClippingLabel->setText(QStringLiteral("Max clipping: %1").arg(value / 100.0f));
+    ui->MaxClippingLabel->setText(QStringLiteral("Max clamping: %1").arg(value / 100.0f));
     if (value < ui->ClippingMin->value()) ui->ClippingMin->setValue(value);
 }
 

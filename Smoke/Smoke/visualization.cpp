@@ -19,7 +19,7 @@ Visualization::Visualization(QWidget *parent) : QOpenGLWidget(parent)
     qDebug() << "Constructor of Visualization";
     simulation = new Simulation(50);
     QTimer *timer = new QTimer;
-    timer->start();
+    timer->start(16);
     QObject::connect(timer,SIGNAL(timeout()),this,SLOT(do_one_simulation_step()));
 }
 
@@ -34,11 +34,9 @@ void Visualization::do_one_simulation_step()
     if(!frozen){
         simulation->do_one_simulation_step();
         if (smokeMode)
-        {
             simulation->calc_divergence(smokeMode);
-        }
-        update();
     }
+    update();
 }
 
 //rainbow: Implements a color palette, mapping the scalar 'value' to a rainbow color RGB
