@@ -134,7 +134,6 @@ void SmokeWindow::on_NumberColors_valueChanged(int value)
 {
     ui->VisualizationWidget->set_number_colors(value);
     ui->NumberColorsLabel->setText(QStringLiteral("Number of colors: %1").arg(value));
-
 }
 
 void SmokeWindow::on_Saturation_valueChanged(int value)
@@ -163,7 +162,7 @@ void SmokeWindow::on_ClippingMin_valueChanged(int value)
     // Range between 0 and 10
     ui->VisualizationWidget->set_clipping_min(value / 100.0f);
     ui->MinClippingLabel->setText(QStringLiteral("Min clipping: %1").arg(value / 100.0f));
-
+    if (value > ui->ClippingMax->value()) ui->ClippingMax->setValue(value);
 }
 
 void SmokeWindow::on_ClippingMax_valueChanged(int value)
@@ -171,14 +170,13 @@ void SmokeWindow::on_ClippingMax_valueChanged(int value)
     // Range between 0 and 10
     ui->VisualizationWidget->set_clipping_max(value / 100.0f);
     ui->MaxClippingLabel->setText(QStringLiteral("Max clipping: %1").arg(value / 100.0f));
-
+    if (value < ui->ClippingMin->value()) ui->ClippingMin->setValue(value);
 }
 
 void SmokeWindow::on_GlyphXSampler_valueChanged(int value)
 {
     ui->VisualizationWidget->set_glyph_x_amount(value);
     ui->XSamplingLabel->setText(QStringLiteral("X Sampling: %1").arg(value));
-
 }
 
 void SmokeWindow::on_GlyphYSampler_valueChanged(int value)
@@ -248,27 +246,26 @@ void SmokeWindow::on_ThresholdSlider_valueChanged(int value)
 {
     ui->VisualizationWidget->set_threshold(value);
     ui->ThresholdLabel->setText(QStringLiteral("Threshold: %1").arg(value));
-
 }
 
 void SmokeWindow::on_NumberIsolinesSlider_valueChanged(int value)
 {
     ui->VisualizationWidget->set_number_isolines(value);
     ui->NumberIsolinesLabel->setText(QStringLiteral("Number of isolines: %1").arg(value));
-
 }
 
 void SmokeWindow::on_MinRhoSlider_valueChanged(int value)
 {
-    ui->VisualizationWidget->set_min_rho(value);
-    ui->MinRhoLabel->setText(QStringLiteral("Min rho: %1").arg(value));
-
+    ui->VisualizationWidget->set_min_rho(value / 100.0f);
+    ui->MinRhoLabel->setText(QStringLiteral("Min rho: %1").arg(value / 100.0f));
+    if (value > ui->MaxRhoSlider->value()) ui->MaxRhoSlider->setValue(value);
 }
 
 void SmokeWindow::on_MaxRhoSlider_valueChanged(int value)
 {
-    ui->VisualizationWidget->set_max_rho(value);
-    ui->MaxRhoLabel->setText(QStringLiteral("Max rho: %1").arg(value));
+    ui->VisualizationWidget->set_max_rho(value / 100.0f);
+    ui->MaxRhoLabel->setText(QStringLiteral("Max rho: %1").arg(value / 100.0f));
+    if (value < ui->MinRhoSlider->value()) ui->MinRhoSlider->setValue(value);
 }
 
 void SmokeWindow::on_HeightPlot_stateChanged(int state)
