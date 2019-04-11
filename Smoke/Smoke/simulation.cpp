@@ -1,6 +1,6 @@
-#include <stdio.h>              //for printing the help text
+#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>               //for various math functions
+#include <math.h>
 #include <limits>
 #include <QDebug>
 #include "simulation.h"
@@ -31,8 +31,6 @@ void Simulation::init_simulation()
     rho     = static_cast<double*>(malloc(dim));
     rho0    = static_cast<double*>(malloc(dim));
     divergence = static_cast<double*>(malloc(dim));
-//    plan_rc = rfftw2d_create_plan(n, n, double_TO_COMPLEX, FFTW_IN_PLACE);
-//    plan_cr = rfftw2d_create_plan(n, n, FFTW_COMPLEX_TO_REAL, FFTW_IN_PLACE);
 
     for (int i = 0; i < n * n; i++)                      //Initialize data structures to 0
     { vx[i] = vy[i] = vx0[i] = vy0[i] = fx[i] = fy[i] = rho[i] = rho0[i] = static_cast<double>(0.0f); }
@@ -195,8 +193,8 @@ void Simulation::calc_divergence(int mode)
         min_idx_x = i-1 < 0 ? 0 : i-1;
         max_idx_x = i+1 > dim*dim ? dim*dim : i+1;
 
-        above = get_length(dataX[min_idx_y], dataY[min_idx_y]);
-        below = get_length(dataX[max_idx_y], dataY[max_idx_y]);
+        below = get_length(dataX[min_idx_y], dataY[min_idx_y]);
+        above = get_length(dataX[max_idx_y], dataY[max_idx_y]);
         left = get_length(dataX[min_idx_x], dataY[min_idx_x]);
         right = get_length(dataX[max_idx_x], dataY[max_idx_x]);
         divX = (left-right);
@@ -208,7 +206,6 @@ void Simulation::calc_divergence(int mode)
         if (divergence[i] < divergence_min)
             divergence_min = divergence[i];
     }
-    //qDebug() << min_divergence << " " << max_divergence;
 }
 
 
