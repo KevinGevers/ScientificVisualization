@@ -672,7 +672,7 @@
                 <item>
                  <widget class="QLabel" name="MinClippingLabel">
                   <property name="text">
-                   <string>Min Clipping: 0.0</string>
+                   <string>Min Clamping: 0.0</string>
                   </property>
                  </widget>
                 </item>
@@ -695,7 +695,7 @@
                 <item>
                  <widget class="QLabel" name="MaxClippingLabel">
                   <property name="text">
-                   <string>Max Clipping: 1.0</string>
+                   <string>Max Clamping: 1.0</string>
                   </property>
                  </widget>
                 </item>
@@ -763,7 +763,7 @@
                   <item>
                    <widget class="QCheckBox" name="IsolineColorCheckbox">
                     <property name="text">
-                     <string>Color</string>
+                     <string>Colour</string>
                     </property>
                    </widget>
                   </item>
