@@ -351,8 +351,8 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                         y1 = (j+calcOffset(threshold, point1, point4))*hn;
                         x2 = (i+calcOffset(threshold, point1, point2))*wn;
                         y2 = j*hn;
-                        glVertex2f(x1, y1);
-                        glVertex2f(x2, y2);
+                        glVertex2f(x1 + wn, y1 + hn);
+                        glVertex2f(x2 + wn, y2 + hn);
 
                         x1 = (i+1)*wn;
                         y1 = (j+calcOffset(threshold, point2, point3))*hn;
@@ -384,8 +384,8 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
                          y1 = (j+calcOffset(threshold, point1, point4))*hn;
                          x2 = (i+calcOffset(threshold, point4, point3))*wn;
                          y2 = (j+1)*hn;
-                         glVertex2f(x1, y1);
-                         glVertex2f(x2, y2);
+                         glVertex2f(x1 + wn, y1 + hn);
+                         glVertex2f(x2 + wn, y2 + hn);
 
                          x1 = (i+calcOffset(threshold, point1, point2))*wn;
                          y1 = j*hn;
@@ -423,8 +423,8 @@ void Visualization::paintIsolines(float threshold, float wn, float hn)
             } else {
                 glColor3f(256,256,256);
             }
-            glVertex2f(x1, y1);
-            glVertex2f(x2, y2);
+            glVertex2f(x1 + wn, y1 + hn);
+            glVertex2f(x2 + wn, y2 + hn);
 
         }
     }
@@ -698,6 +698,11 @@ void Visualization::set_clipping_max(float value)
 void Visualization::set_clipping_min(float value)
 {
     clipping_min = value;
+}
+
+int Visualization::get_frozen()
+{
+    return frozen;
 }
 
 int Visualization::toggle_frozen()

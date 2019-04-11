@@ -880,7 +880,7 @@
                    <number>10</number>
                   </property>
                   <property name="value">
-                   <number>10</number>
+                   <number>100</number>
                   </property>
                   <property name="orientation">
                    <enum>Qt::Horizontal</enum>
@@ -930,7 +930,7 @@
      <x>0</x>
      <y>0</y>
      <width>995</width>
-     <height>22</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuSimulation">

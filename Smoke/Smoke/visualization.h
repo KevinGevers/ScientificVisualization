@@ -67,6 +67,7 @@ public:
     float get_color_max();
     float get_color_min();
 
+    int get_frozen();
 public slots:
     void do_one_simulation_step();
 

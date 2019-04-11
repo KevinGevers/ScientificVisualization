@@ -70,13 +70,19 @@ void SmokeWindow::actionPauze()
 
 void SmokeWindow::actionSave()
 {
-    actionPauze();
+    int play_state = ui->VisualizationWidget->get_frozen();
+
+    if (play_state == 0)
+        actionPauze();
+
     QString file = QFileDialog::getSaveFileName(this, "Save mesh", "", tr("PNG (*.png)" ));
     if (!file.isEmpty()){
         QImage img = ui->VisualizationWidget->grabFramebuffer();
         img.save(file);
-        actionPauze();
     }
+
+    if (play_state == 0)
+        actionPauze();
 }
 
 void SmokeWindow::actionResetSimulation()
